@@ -72,8 +72,8 @@ Prerequisites
          * PyTorch compatible with your system architecture (CUDA support recommended for high-performance scale, though SNN sparsity makes CPU inference viable).
 Installation & Run
          1. Clone the Repository:
-git clone [https://github.com/yourusername/Nova-Simona-Core.git](https://github.com/yourusername/Nova-Simona-Core.git)
-cd Nova-Simona-Core
+git clone: https://github.com/IVELINYTBG1/NS-Neuromorphic-Engine
+cd Nova_Simona_Core
 
          2. Configure the Python Environment:
 python -m venv venv
