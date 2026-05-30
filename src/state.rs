@@ -134,6 +134,46 @@ pub struct BrainResult {
     pub simona_pressure:      f64,
     pub story_active:         bool,
     pub story_event:          Option<String>,
+    // Babbling cortex counters
+    pub nova_babble_count:    u64,
+    pub nova_bound_count:     u64,
+    pub nova_motor_map_size:  u64,
+    pub simona_babble_count:  u64,
+    pub simona_bound_count:   u64,
+    pub simona_motor_map_size:u64,
+    // Vocal self-esteem — each personality's "do I like how I sound?" (0..1)
+    pub nova_voice_esteem:    f64,
+    pub simona_voice_esteem:  f64,
+    // Predictive self-monitoring — "surprise" = forward-model prediction error (0..1)
+    pub nova_voice_surprise:  f64,
+    pub simona_voice_surprise:f64,
+    // Secure inter-personality link — pending message counts (content opaque to observer)
+    pub link_nova_to_simona:  u64,
+    pub link_simona_to_nova:  u64,
+    // Neurochemistry — dopamine / serotonin / GABA / amygdala arousal, per personality
+    pub nova_da:        f64,
+    pub nova_ser:       f64,
+    pub nova_gaba:      f64,
+    pub nova_arousal:   f64,
+    pub simona_da:      f64,
+    pub simona_ser:     f64,
+    pub simona_gaba:    f64,
+    pub simona_arousal: f64,
+    // Cerebellum — motor coordination/fluency (0..1, climbs as it learns)
+    pub nova_coord:     f64,
+    pub simona_coord:   f64,
+    // Sleep / consolidation (Stage 3)
+    pub asleep:         bool,
+    pub sleep_pressure: f64,
+    pub nova_episodes:  u64,
+    pub simona_episodes:u64,
+    // Stage 4 neuromodulators: acetylcholine / norepinephrine / oxytocin
+    pub nova_ach:   f64,
+    pub nova_ne:    f64,
+    pub nova_oxy:   f64,
+    pub simona_ach: f64,
+    pub simona_ne:  f64,
+    pub simona_oxy: f64,
 }
 
 impl Default for BrainResult {
@@ -150,8 +190,30 @@ impl Default for BrainResult {
             combined_id:0.0, face_present:false, imprint_status:"learning".into(),
             camera_active:false, nova_vigilance:false, nova_pressure:0.0,
             simona_pressure:0.0, story_active:false, story_event:None,
+            nova_babble_count:0, nova_bound_count:0, nova_motor_map_size:0,
+            simona_babble_count:0, simona_bound_count:0, simona_motor_map_size:0,
+            nova_voice_esteem:0.5, simona_voice_esteem:0.5,
+            nova_voice_surprise:0.5, simona_voice_surprise:0.5,
+            link_nova_to_simona:0, link_simona_to_nova:0,
+            // Neurochemistry baselines (match brain.py Neuromodulators init)
+            nova_da:0.45, nova_ser:0.75, nova_gaba:0.45, nova_arousal:0.0,
+            simona_da:0.60, simona_ser:0.40, simona_gaba:0.35, simona_arousal:0.0,
+            nova_coord:0.4, simona_coord:0.4,
+            asleep:false, sleep_pressure:0.0, nova_episodes:0, simona_episodes:0,
+            nova_ach:0.50, nova_ne:0.40, nova_oxy:0.30,
+            simona_ach:0.50, simona_ne:0.40, simona_oxy:0.30,
         }
     }
+}
+
+// ── Web search event ──────────────────────────────────────────────────────────
+
+#[derive(Clone, Debug)]
+pub struct SearchEvent {
+    pub speaker:   String,   // "nova" | "simona"
+    pub query:     String,
+    pub snippet:   String,
+    pub timestamp: String,   // "HH:MM:SS" local time when ingested
 }
 
 // ── Shared state ──────────────────────────────────────────────────────────────
@@ -159,6 +221,7 @@ impl Default for BrainResult {
 pub const SPARKLINE_LEN:    usize = 40;
 pub const CHAT_HISTORY_MAX: usize = 300;
 pub const THOUGHT_HISTORY:  usize = 8;
+pub const SEARCH_HISTORY:   usize = 12;
 
 #[derive(Clone, Debug)]
 pub struct SharedState {
@@ -179,6 +242,7 @@ pub struct SharedState {
     // Chat panels
     pub chat_history:     Vec<ChatLine>,
     pub thought_history:  Vec<ChatLine>,
+    pub search_history:   Vec<SearchEvent>,
     // Input
     pub input_text:       String,
     pub typing_active:    bool,   // cursor shown in text box
@@ -206,6 +270,7 @@ impl Default for SharedState {
                 ChatLine::system("In STT: say 'Nova' or 'Simona' to wake them. They learn over time."),
             ],
             thought_history: vec![],
+            search_history: vec![],
             input_text:String::new(),
             typing_active:false,
             pending_from_stt:false,

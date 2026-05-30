@@ -179,7 +179,7 @@ class CameraThread:
         self._mp_face = mp.solutions.face_mesh.FaceMesh(
             static_image_mode=False,
             max_num_faces=3,            # detect up to 3 faces (multi-person room)
-            refine_landmarks=True,      # iris landmarks included
+            refine_landmarks=False,     # 468 landmarks; _FACE_BASIS expects this
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5,
         )

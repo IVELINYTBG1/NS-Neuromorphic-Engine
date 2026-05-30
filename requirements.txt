@@ -30,6 +30,10 @@ sounddevice>=0.4.6
 # ── System utilities ──────────────────────────────────────────────────────────
 psutil>=5.9.0
 
+# ── Emergent web access (Nova/Simona autonomous search via Perplexity) ───────
+# Set PERPLEXITY_API_KEY in .env. Returns synthesized answers + citations.
+requests>=2.28.0
+
 # ── Fedora 44 notes ───────────────────────────────────────────────────────────
 # Before pip install, ensure system deps:
 #   sudo dnf install -y python3-devel portaudio-devel

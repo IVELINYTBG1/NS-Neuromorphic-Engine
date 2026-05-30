@@ -12,8 +12,8 @@ use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList, PyModule};
 
 use crate::state::{
-    BrainResult, ChatLine, SharedState, SttState,
-    push_spark, trim_chat, SPARKLINE_LEN,
+    BrainResult, ChatLine, SearchEvent, SharedState, SttState,
+    push_spark, trim_chat, SEARCH_HISTORY, SPARKLINE_LEN,
 };
 
 pub const BRAIN_INTERVAL_MS: u64 = 50; // 20 Hz
@@ -102,6 +102,28 @@ pub fn brain_thread(
                 }
             }
 
+            // ── Poll emergent web searches ────────────────────────────────
+            if let Ok(searches) = brain.call_method0("get_pending_searches") {
+                if let Ok(events) = searches.extract::<Vec<(String, String, String)>>() {
+                    if !events.is_empty() {
+                        let now = chrono::Local::now().format("%H:%M:%S").to_string();
+                        crate::update_state(&state, |s| {
+                            for (speaker, query, snippet) in &events {
+                                s.search_history.push(SearchEvent {
+                                    speaker:   speaker.clone(),
+                                    query:     query.clone(),
+                                    snippet:   snippet.clone(),
+                                    timestamp: now.clone(),
+                                });
+                                if s.search_history.len() > SEARCH_HISTORY {
+                                    s.search_history.remove(0);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
             // ── STT status sync ───────────────────────────────────────────
             {
                 let sr = stt_results.lock().unwrap();
@@ -152,9 +174,14 @@ pub fn brain_thread(
             }
 
             // ── Pace to 20 Hz ─────────────────────────────────────────────
+            // Release the GIL during the inter-tick sleep so Python-side
+            // personality threads (Nova, Simona) can advance their own loops.
+            // Without this, Python threads spawned inside brain.py would
+            // never get CPU time because Rust holds Python::with_gil for
+            // the entire brain-thread loop.
             let el     = t0.elapsed();
             let budget = Duration::from_millis(BRAIN_INTERVAL_MS);
-            if el < budget { thread::sleep(budget - el); }
+            if el < budget { py.allow_threads(|| thread::sleep(budget - el)); }
         }
     });
 }
@@ -242,6 +269,9 @@ pub fn extract_str(d: &pyo3::Bound<'_, PyDict>, key: &str) -> Option<String> {
 pub fn extract_f64(d: &pyo3::Bound<'_, PyDict>, key: &str) -> f64 {
     d.get_item(key).ok().flatten().and_then(|v| v.extract::<f64>().ok()).unwrap_or(0.0)
 }
+pub fn extract_f64_or(d: &pyo3::Bound<'_, PyDict>, key: &str, default: f64) -> f64 {
+    d.get_item(key).ok().flatten().and_then(|v| v.extract::<f64>().ok()).unwrap_or(default)
+}
 pub fn extract_u64(d: &pyo3::Bound<'_, PyDict>, key: &str) -> u64 {
     d.get_item(key).ok().flatten().and_then(|v| v.extract::<u64>().ok()).unwrap_or(0)
 }
@@ -288,6 +318,38 @@ pub fn extract_step_result(d: &pyo3::Bound<'_, PyDict>, tick: u64) -> BrainResul
         simona_pressure:      extract_f64(d, "simona_pressure"),
         story_active:         false,
         story_event:          None,
+        nova_babble_count:    extract_u64(d, "nova_babble_count"),
+        nova_bound_count:     extract_u64(d, "nova_bound_count"),
+        nova_motor_map_size:  extract_u64(d, "nova_motor_map_size"),
+        simona_babble_count:  extract_u64(d, "simona_babble_count"),
+        simona_bound_count:   extract_u64(d, "simona_bound_count"),
+        simona_motor_map_size:extract_u64(d, "simona_motor_map_size"),
+        nova_voice_esteem:    extract_f64_or(d, "nova_voice_esteem",     0.5),
+        simona_voice_esteem:  extract_f64_or(d, "simona_voice_esteem",   0.5),
+        nova_voice_surprise:  extract_f64_or(d, "nova_voice_surprise",   0.5),
+        simona_voice_surprise:extract_f64_or(d, "simona_voice_surprise", 0.5),
+        link_nova_to_simona:  extract_u64(d, "link_nova_to_simona"),
+        link_simona_to_nova:  extract_u64(d, "link_simona_to_nova"),
+        nova_da:        extract_f64_or(d, "nova_da",        0.45),
+        nova_ser:       extract_f64_or(d, "nova_ser",       0.75),
+        nova_gaba:      extract_f64_or(d, "nova_gaba",      0.45),
+        nova_arousal:   extract_f64_or(d, "nova_arousal",   0.0),
+        simona_da:      extract_f64_or(d, "simona_da",      0.60),
+        simona_ser:     extract_f64_or(d, "simona_ser",     0.40),
+        simona_gaba:    extract_f64_or(d, "simona_gaba",    0.35),
+        simona_arousal: extract_f64_or(d, "simona_arousal", 0.0),
+        nova_coord:     extract_f64_or(d, "nova_coord",     0.4),
+        simona_coord:   extract_f64_or(d, "simona_coord",   0.4),
+        asleep:          extract_bool(d, "asleep"),
+        sleep_pressure:  extract_f64_or(d, "sleep_pressure", 0.0),
+        nova_episodes:   extract_u64(d, "nova_episodes"),
+        simona_episodes: extract_u64(d, "simona_episodes"),
+        nova_ach:   extract_f64_or(d, "nova_ach",   0.50),
+        nova_ne:    extract_f64_or(d, "nova_ne",    0.40),
+        nova_oxy:   extract_f64_or(d, "nova_oxy",   0.30),
+        simona_ach: extract_f64_or(d, "simona_ach", 0.50),
+        simona_ne:  extract_f64_or(d, "simona_ne",  0.40),
+        simona_oxy: extract_f64_or(d, "simona_oxy", 0.30),
     }
 }
 

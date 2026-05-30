@@ -198,13 +198,17 @@ fn draw(f: &mut Frame, s: &SharedState) {
     let area = f.size();
     let has_thoughts = !s.thought_history.is_empty();
     let thought_h    = if has_thoughts { 4u16 } else { 0 };
+    let has_search   = !s.search_history.is_empty();
+    let search_h     = if has_search { 6u16 } else { 0 };
 
     let root = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
             Constraint::Length(3),             // title
+            Constraint::Length(3),             // speaker banner
             Constraint::Min(16),               // brain panels
             Constraint::Length(thought_h),     // inner thoughts
+            Constraint::Length(search_h),      // web searches (emergent)
             Constraint::Length(8),             // conversation
             Constraint::Length(5),             // input panel (taller for STT)
             Constraint::Length(3),             // status
@@ -212,11 +216,51 @@ fn draw(f: &mut Frame, s: &SharedState) {
         .split(area);
 
     draw_title(f, root[0], s);
-    draw_brains(f, root[1], s);
-    if has_thoughts { draw_thoughts(f, root[2], s); }
-    draw_chat(f, root[3], s);
-    draw_input(f, root[4], s);
-    draw_status(f, root[5], s);
+    draw_speaker_banner(f, root[1], s);
+    draw_brains(f, root[2], s);
+    if has_thoughts { draw_thoughts(f, root[3], s); }
+    if has_search   { draw_searches(f, root[4], s); }
+    draw_chat(f, root[5], s);
+    draw_input(f, root[6], s);
+    draw_status(f, root[7], s);
+}
+
+// ── SPEAKER BANNER ────────────────────────────────────────────────────────────
+// Big, can't-miss indicator of which personality is currently vocalizing.
+// Uses reverse-video (filled bar) in the persona's color so audio events
+// have an unmistakable visual analog while the babble is being heard.
+fn draw_speaker_banner(f: &mut Frame, area: Rect, s: &SharedState) {
+    let nova = s.brain.nova_tts_speaking;
+    let sim  = s.brain.simona_tts_speaking;
+
+    let (text, color) = if nova && sim {
+        (" >>>  NOVA + SIMONA SPEAKING  <<< ".to_string(), Color::White)
+    } else if nova {
+        (" >>>  NOVA SPEAKING  <<< ".to_string(), Color::Blue)
+    } else if sim {
+        (" >>>  SIMONA SPEAKING  <<< ".to_string(), Color::Magenta)
+    } else {
+        (" — silent — ".to_string(), Color::DarkGray)
+    };
+
+    let style = if nova || sim {
+        Style::default()
+            .fg(color)
+            .add_modifier(Modifier::BOLD | Modifier::REVERSED)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
+
+    let width    = area.width.saturating_sub(2) as usize; // borders
+    let pad_each = width.saturating_sub(text.len()) / 2;
+    let padded   = format!("{:pad$}{}{:pad$}", "", text, "", pad = pad_each);
+
+    f.render_widget(
+        Paragraph::new(Line::from(vec![Span::styled(padded, style)]))
+            .block(Block::default().borders(Borders::ALL)
+                .border_style(Style::default().fg(if nova || sim { color } else { Color::DarkGray }))),
+        area,
+    );
 }
 
 // ── TITLE ─────────────────────────────────────────────────────────────────────
@@ -302,7 +346,13 @@ fn draw_phill_panel(f: &mut Frame, area: Rect, s: &SharedState) {
         Gauge::default()
             .block(Block::default()
                 .title(Span::styled(
-                    format!(" PHILL {}", if s.brain.phill_spiked { "*" } else { "" }),
+                    format!(" PHILL {}  {}",
+                        if s.brain.phill_spiked { "*" } else { "" },
+                        if s.brain.asleep {
+                            format!("[SLEEP zzz {:.0}%]", s.brain.sleep_pressure * 100.0)
+                        } else {
+                            format!("[awake {:.0}%]", s.brain.sleep_pressure * 100.0)
+                        }),
                     Style::default().fg(pc).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
                 .border_style(Style::default().fg(Color::DarkGray)))
@@ -422,8 +472,14 @@ fn draw_nova_panel(f: &mut Frame, area: Rect, s: &SharedState) {
     let vig_col = if s.brain.nova_vigilance { Color::Red } else { Color::Blue };
     let block   = Block::default()
         .title(Span::styled(
-            format!(" NOVA (19)  7 regions  PFC-thr={:.2}  pressure={:.2}",
-                    s.brain.nova_pfc_threshold, s.brain.nova_pressure),
+            format!(" NOVA (19)  PFC-thr={:.2}  pressure={:.2}  babble:{}/{} map:{}  voice\u{2665}{:.0}%  pred{:.0}%  DA{:.2} 5HT{:.2} GA{:.2} AR{:.2}  coord{:.0}%  ACh{:.1} NE{:.1} OXY{:.2}",
+                    s.brain.nova_pfc_threshold, s.brain.nova_pressure,
+                    s.brain.nova_babble_count, s.brain.nova_bound_count,
+                    s.brain.nova_motor_map_size, s.brain.nova_voice_esteem * 100.0,
+                    (1.0 - s.brain.nova_voice_surprise) * 100.0,
+                    s.brain.nova_da, s.brain.nova_ser, s.brain.nova_gaba, s.brain.nova_arousal,
+                    s.brain.nova_coord * 100.0,
+                    s.brain.nova_ach, s.brain.nova_ne, s.brain.nova_oxy),
             Style::default().fg(vig_col).add_modifier(Modifier::BOLD)))
         .borders(Borders::ALL)
         .border_style(Style::default().fg(vig_col));
@@ -487,8 +543,14 @@ fn draw_simona_panel(f: &mut Frame, area: Rect, s: &SharedState) {
 
     let block = Block::default()
         .title(Span::styled(
-            format!(" SIMONA (8)  6 regions  Broca-thr={:.2}  pressure={:.2}",
-                    s.brain.simona_broca_thr, s.brain.simona_pressure),
+            format!(" SIMONA (8)  Broca-thr={:.2}  pressure={:.2}  babble:{}/{} map:{}  voice\u{2665}{:.0}%  pred{:.0}%  DA{:.2} 5HT{:.2} GA{:.2} AR{:.2}  coord{:.0}%  ACh{:.1} NE{:.1} OXY{:.2}",
+                    s.brain.simona_broca_thr, s.brain.simona_pressure,
+                    s.brain.simona_babble_count, s.brain.simona_bound_count,
+                    s.brain.simona_motor_map_size, s.brain.simona_voice_esteem * 100.0,
+                    (1.0 - s.brain.simona_voice_surprise) * 100.0,
+                    s.brain.simona_da, s.brain.simona_ser, s.brain.simona_gaba, s.brain.simona_arousal,
+                    s.brain.simona_coord * 100.0,
+                    s.brain.simona_ach, s.brain.simona_ne, s.brain.simona_oxy),
             Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)))
         .borders(Borders::ALL)
         .border_style(Style::default().fg(Color::Magenta));
@@ -624,6 +686,51 @@ fn draw_thoughts(f: &mut Frame, area: Rect, s: &SharedState) {
                     Style::default().fg(Color::DarkGray)))
                 .borders(Borders::ALL)
                 .border_style(Style::default().fg(Color::DarkGray))),
+        area,
+    );
+}
+
+// ── WEB SEARCHES ──────────────────────────────────────────────────────────────
+// Emergent only — fired when SearchCortex pressure crosses threshold.
+// Shows: [HH:MM:SS] WHO -> query  | snippet (truncated)
+fn draw_searches(f: &mut Frame, area: Rect, s: &SharedState) {
+    if area.height < 2 { return; }
+    let inner_w = area.width.saturating_sub(4) as usize;
+    let items: Vec<ListItem> = s.search_history.iter().map(|ev| {
+        let (label, color) = if ev.speaker == "nova" {
+            ("Nova  ", Color::Blue)
+        } else {
+            ("Simona", Color::Magenta)
+        };
+        // Truncate snippet to fit visible width after the prefix.
+        let prefix_len = ev.timestamp.len() + label.len() + ev.query.len() + 10;
+        let snippet_max = inner_w.saturating_sub(prefix_len).max(8);
+        let snip = if ev.snippet.len() > snippet_max {
+            format!("{}\u{2026}", &ev.snippet[..snippet_max])
+        } else {
+            ev.snippet.clone()
+        };
+        ListItem::new(Line::from(vec![
+            Span::styled(format!("[{}] ", ev.timestamp),
+                Style::default().fg(Color::DarkGray)),
+            Span::styled(format!("{label} "),
+                Style::default().fg(color).add_modifier(Modifier::BOLD)),
+            Span::styled("\u{2192} ", Style::default().fg(Color::Yellow)),
+            Span::styled(ev.query.clone(),
+                Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            Span::styled(" | ", Style::default().fg(Color::DarkGray)),
+            Span::styled(snip, Style::default().fg(Color::Gray)),
+        ]))
+    }).collect();
+
+    f.render_widget(
+        List::new(items)
+            .block(Block::default()
+                .title(Span::styled(
+                    " WEB SEARCH  (emergent -- fires when curiosity / unknown-word / pronunciation pressure crosses threshold)",
+                    Style::default().fg(Color::Yellow)))
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(Color::Yellow))),
         area,
     );
 }

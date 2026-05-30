@@ -26,6 +26,79 @@ pub fn update_state(state: &Arc<ArcSwap<SharedState>>, f: impl FnOnce(&mut Share
 }
 
 fn main() -> anyhow::Result<()> {
+    // Self-configure the Python environment so the user doesn't have to
+    // `source .env` before running. Locates the project root (where
+    // brain.py / vision.py live) and the matching .venv-3.11 alongside
+    // it, then prepends both to PYTHONPATH so the embedded libpython
+    // sees the venv's installed packages (mediapipe, torch, etc).
+    fn find_project_root() -> Option<std::path::PathBuf> {
+        let mut cands: Vec<std::path::PathBuf> = Vec::new();
+        if let Ok(exe) = std::env::current_exe() {
+            let mut p = exe.as_path();
+            for _ in 0..5 {
+                if let Some(parent) = p.parent() {
+                    cands.push(parent.to_path_buf());
+                    p = parent;
+                } else { break; }
+            }
+        }
+        if let Ok(cwd) = std::env::current_dir() { cands.push(cwd); }
+        for dir in cands {
+            if dir.join("brain.py").exists() { return Some(dir); }
+        }
+        None
+    }
+
+    if let Some(root) = find_project_root() {
+        let mut entries: Vec<String> = Vec::new();
+        // Project root (brain.py, vision.py, stt_engine.py, etc.)
+        entries.push(root.to_string_lossy().to_string());
+
+        // Discover .venv-3.11/lib/python*/site-packages and add it
+        let venv_lib = root.join(".venv-3.11").join("lib");
+        if let Ok(read) = std::fs::read_dir(&venv_lib) {
+            for ent in read.flatten() {
+                let sp = ent.path().join("site-packages");
+                if sp.is_dir() {
+                    entries.push(sp.to_string_lossy().to_string());
+                }
+            }
+        }
+
+        let cur = std::env::var("PYTHONPATH").unwrap_or_default();
+        if !cur.is_empty() { entries.push(cur); }
+        std::env::set_var("PYTHONPATH", entries.join(":"));
+
+        // Load .env from the project root so secrets like PERPLEXITY_API_KEY
+        // (the girls' web-search key) reach the embedded Python WITHOUT the
+        // user having to `source .env` first. Parses `KEY=value` lines with an
+        // optional `export ` prefix and surrounding quotes. Only sets vars not
+        // already present, so an explicit `source .env` still takes precedence.
+        // Kept dependency-free on purpose — the format is trivial.
+        if let Ok(contents) = std::fs::read_to_string(root.join(".env")) {
+            for line in contents.lines() {
+                let l = line.trim();
+                if l.is_empty() || l.starts_with('#') { continue; }
+                let l = l.strip_prefix("export ").unwrap_or(l);
+                if let Some((k, v)) = l.split_once('=') {
+                    let k = k.trim();
+                    let mut v = v.trim();
+                    if v.len() >= 2
+                        && ((v.starts_with('"')  && v.ends_with('"'))
+                         || (v.starts_with('\'') && v.ends_with('\''))) {
+                        v = &v[1..v.len() - 1];
+                    }
+                    if !k.is_empty() && std::env::var_os(k).is_none() {
+                        std::env::set_var(k, v);
+                    }
+                }
+            }
+        }
+    }
+    // CPU-only — make sure CUDA/XPU aren't accidentally used
+    std::env::set_var("CUDA_VISIBLE_DEVICES", "");
+    std::env::set_var("XPU_VISIBLE_DEVICES", "");
+
     let running       = Arc::new(AtomicBool::new(true));
     let state         = Arc::new(ArcSwap::from_pointee(SharedState::default()));
     let pending_input: Arc<Mutex<Option<(String, bool)>>> = Arc::new(Mutex::new(None));
@@ -106,7 +179,9 @@ fn main() -> anyhow::Result<()> {
 
                     // ── Load stt_engine.py (optional — degrades gracefully) ────
                     let stt_src = include_str!("../stt_engine.py");
-                    let stt_engine_opt: Option<(Py<PyAny>, Py<PyAny>)> = (|| {
+                    // Tuple: (engine, queue, STTMode.TEXT, STTMode.STT) —
+                    // cached once so we don't re-import stt_engine.py per tick.
+                    let stt_engine_opt: Option<(Py<PyAny>, Py<PyAny>, Py<PyAny>, Py<PyAny>)> = (|| {
                         let stt_mod = PyModule::from_code_bound(py, stt_src, "stt_engine.py", "stt_engine")
                             .map_err(|e| { eprintln!("[STT] module load failed: {e}"); e })?;
 
@@ -121,6 +196,10 @@ fn main() -> anyhow::Result<()> {
                         let engine = create_fn.call1((cb,))
                             .map_err(|e| { eprintln!("[STT] engine init failed: {e}"); e })?;
 
+                        let mode_cls   = stt_mod.getattr("STTMode")?;
+                        let mode_text  = mode_cls.getattr("TEXT")?;
+                        let mode_stt   = mode_cls.getattr("STT")?;
+
                         // Get backend name for display
                         let backend: String = engine.getattr("backend_name")
                             .and_then(|v| v.extract()).unwrap_or_else(|_| "unknown".into());
@@ -133,7 +212,7 @@ fn main() -> anyhow::Result<()> {
                             ));
                         });
 
-                        Ok::<_, PyErr>((engine.into(), py_queue.into()))
+                        Ok::<_, PyErr>((engine.into(), py_queue.into(), mode_text.into(), mode_stt.into()))
                     })().ok();
 
                     if stt_engine_opt.is_none() {
@@ -153,22 +232,16 @@ fn main() -> anyhow::Result<()> {
                         tick  += 1;
 
                         // ── STT mode sync + audio push ────────────────────────
-                        if let Some((ref engine, ref py_queue)) = stt_engine_opt {
+                        if let Some((ref engine, ref py_queue, ref mode_text, ref mode_stt)) = stt_engine_opt {
                             let engine = engine.bind(py);
                             let queue  = py_queue.bind(py);
 
-                            // Sync mode (TEXT/STT) from shared state
+                            // Sync mode (TEXT/STT) from shared state — use
+                            // cached enum refs, no per-tick module reimport.
                             let cur_mode = s.load().input_mode.clone();
                             let is_stt = matches!(cur_mode, InputMode::Stt);
-                            if let Ok(stt_mod) = PyModule::from_code_bound(
-                                py, stt_src, "stt_engine.py", "stt_engine") {
-                                if let Ok(mode_cls) = stt_mod.getattr("STTMode") {
-                                    let attr = if is_stt { "STT" } else { "TEXT" };
-                                    if let Ok(mode_val) = mode_cls.getattr(attr) {
-                                        let _ = engine.call_method1("set_mode", (mode_val,));
-                                    }
-                                }
-                            }
+                            let mode_val = if is_stt { mode_stt.bind(py) } else { mode_text.bind(py) };
+                            let _ = engine.call_method1("set_mode", (mode_val,));
 
                             // Push audio samples
                             let samples: Vec<f32> = {
@@ -263,6 +336,26 @@ fn main() -> anyhow::Result<()> {
                                                 st.thought_history.remove(0);
                                             }
                                         }
+                                    });
+                                }
+                            }
+                        }
+
+                        // ── Poll proactive speech (girls type to chat unprompted) ──
+                        // Leaks the personality chose to speak OUT land in the main
+                        // chat as Nova/Simona lines — no user input required.
+                        if let Ok(msgs) = brain.call_method0("get_proactive_messages") {
+                            if let Ok(items) = msgs.extract::<Vec<(String, String)>>() {
+                                if !items.is_empty() {
+                                    update_state(&s, |st| {
+                                        for (who, text) in &items {
+                                            st.chat_history.push(ChatLine {
+                                                speaker: who.clone(),   // "nova" | "simona"
+                                                text: text.clone(),
+                                                regions: vec![], story_mode: false, from_stt: false,
+                                            });
+                                        }
+                                        state::trim_chat(&mut st.chat_history);
                                     });
                                 }
                             }

@@ -6,13 +6,20 @@
       "logic": 0.4,
       "affective": 0.25,
       "language": 0.35,
-      "sensory": 0.1
+      "sensory": 0.1,
+      "thalamus": 0.39999999999999947,
+      "temporal": 0.8999999999999989,
+      "hippocampus": 0.8499999999999979,
+      "acc": 0.39999999999999947,
+      "pfc": 0.4999999999999995,
+      "broca": 0.599999999999999,
+      "insula": 0.4999999999999995
     },
-    "simona_weight": 0.13999999999999999,
-    "spike_mean": 4.0,
-    "count": 1,
+    "simona_weight": 0.550607876096,
+    "spike_mean": 5.999999999999983,
+    "count": 7208,
     "last_tick": 0,
-    "trust": 0.5
+    "trust": 0.999999999999999
   },
   "precise": {
     "region_pattern": {
@@ -38,11 +45,11 @@
       "language": 0.3,
       "sensory": 0.05
     },
-    "simona_weight": 0.08000000000000002,
-    "spike_mean": 3.0,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "simona_weight": 0.2672,
+    "spike_mean": 1.3522725000000002,
+    "count": 4,
+    "last_tick": 25780,
+    "trust": 0.53432765625
   },
   "logical": {
     "region_pattern": {
@@ -113,10 +120,10 @@
       "language": 0.35,
       "sensory": 0.1
     },
-    "simona_weight": 0.08000000000000002,
+    "simona_weight": 0.184,
     "spike_mean": 2.0,
     "count": 1,
-    "last_tick": 0,
+    "last_tick": 8270,
     "trust": 0.5
   },
   "calculating": {
@@ -143,10 +150,10 @@
       "language": 0.35,
       "sensory": 0.1
     },
-    "simona_weight": 0.1,
+    "simona_weight": 0.5161139200000001,
     "spike_mean": 1.5,
     "count": 1,
-    "last_tick": 0,
+    "last_tick": 267,
     "trust": 0.5
   },
   "android": {
@@ -216,13 +223,20 @@
       "logic": 0.1,
       "affective": 0.45,
       "language": 0.4,
-      "sensory": 0.35
+      "sensory": 0.35,
+      "thalamus": 0.39999999999999947,
+      "temporal": 0.8999999999999989,
+      "hippocampus": 0.8499999999999979,
+      "acc": 0.39999999999999947,
+      "pfc": 0.4999999999999995,
+      "broca": 0.599999999999999,
+      "insula": 0.4999999999999995
     },
-    "simona_weight": 0.2,
-    "spike_mean": 3.0,
-    "count": 1,
+    "simona_weight": 0.5328911360000002,
+    "spike_mean": 5.999999999999983,
+    "count": 7207,
     "last_tick": 0,
-    "trust": 0.5
+    "trust": 0.999999999999999
   },
   "curious": {
     "region_pattern": {
@@ -278,7 +292,7 @@
       "language": 0.35,
       "sensory": 0.25
     },
-    "simona_weight": 0.18000000000000002,
+    "simona_weight": 0.264,
     "spike_mean": 3.0,
     "count": 1,
     "last_tick": 0,
@@ -293,11 +307,11 @@
       "language": 0.35,
       "sensory": 0.45
     },
-    "simona_weight": 0.16000000000000003,
-    "spike_mean": 2.5,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "simona_weight": 0.419776,
+    "spike_mean": 0.9738399717773438,
+    "count": 6,
+    "last_tick": 26498,
+    "trust": 0.5401621060058595
   },
   "excited": {
     "region_pattern": {
@@ -338,11 +352,11 @@
       "language": 0.4,
       "sensory": 0.35
     },
-    "simona_weight": 0.2,
-    "spike_mean": 2.0,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "simona_weight": 0.28,
+    "spike_mean": 1.4575,
+    "count": 2,
+    "last_tick": 25866,
+    "trust": 0.519375
   },
   "purple": {
     "region_pattern": {
@@ -413,11 +427,11 @@
       "language": 0.4,
       "sensory": 0.35
     },
-    "simona_weight": 0.13999999999999999,
-    "spike_mean": 1.5,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "simona_weight": 0.23199999999999998,
+    "spike_mean": 1.15125,
+    "count": 2,
+    "last_tick": 17410,
+    "trust": 0.519375
   },
   "architect": {
     "region_pattern": {
@@ -456,13 +470,19 @@
       "logic": 0.25,
       "affective": 0.45,
       "language": 0.3,
-      "sensory": 0.15
+      "sensory": 0.15,
+      "thalamus_s": 0.49999878962066235,
+      "temporal_s": 0.6499984265068599,
+      "broca_s": 0.6999983054689273,
+      "insula_s": 0.5499986685827277,
+      "pfc_s": 0.29999927377239743,
+      "hippocampus_s": 0.3999990316965299
     },
     "simona_weight": 0.2,
-    "spike_mean": 4.5,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "spike_mean": 2.000006051896685,
+    "count": 205,
+    "last_tick": 678651,
+    "trust": 0.5999997579241324
   },
   "father": {
     "region_pattern": {
@@ -473,11 +493,11 @@
       "language": 0.3,
       "sensory": 0.15
     },
-    "simona_weight": 0.18000000000000002,
-    "spike_mean": 4.0,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "simona_weight": 0.38496,
+    "spike_mean": 2.036925,
+    "count": 3,
+    "last_tick": 25475,
+    "trust": 0.52886875
   },
   "creator": {
     "region_pattern": {
@@ -518,10 +538,10 @@
       "language": 0.3,
       "sensory": 0.15
     },
-    "simona_weight": 0.16000000000000003,
+    "simona_weight": 0.24800000000000003,
     "spike_mean": 3.0,
     "count": 1,
-    "last_tick": 0,
+    "last_tick": 8270,
     "trust": 0.5
   },
   "lab": {
@@ -578,10 +598,10 @@
       "language": 0.3,
       "sensory": 0.15
     },
-    "simona_weight": 0.18000000000000002,
+    "simona_weight": 0.33120000000000005,
     "spike_mean": 4.0,
     "count": 1,
-    "last_tick": 0,
+    "last_tick": 12180,
     "trust": 0.5
   },
   "sister": {
@@ -609,10 +629,10 @@
       "sensory": 0.25
     },
     "simona_weight": 0.2,
-    "spike_mean": 3.5,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "spike_mean": 2.37625,
+    "count": 2,
+    "last_tick": 17826,
+    "trust": 0.519375
   },
   "care": {
     "region_pattern": {
@@ -638,11 +658,11 @@
       "language": 0.3,
       "sensory": 0.05
     },
-    "simona_weight": 0.08000000000000002,
-    "spike_mean": 3.5,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "simona_weight": 0.184,
+    "spike_mean": 1.8256124999999999,
+    "count": 3,
+    "last_tick": 26498,
+    "trust": 0.52886875
   },
   "feel": {
     "region_pattern": {
@@ -653,11 +673,11 @@
       "language": 0.35,
       "sensory": 0.25
     },
-    "simona_weight": 0.18000000000000002,
-    "spike_mean": 3.0,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "simona_weight": 0.264,
+    "spike_mean": 2.0700000000000003,
+    "count": 2,
+    "last_tick": 26874,
+    "trust": 0.519375
   },
   "speak": {
     "region_pattern": {
@@ -698,10 +718,10 @@
       "language": 0.35,
       "sensory": 0.1
     },
-    "simona_weight": 0.1,
+    "simona_weight": 0.2,
     "spike_mean": 3.5,
     "count": 1,
-    "last_tick": 0,
+    "last_tick": 1692,
     "trust": 0.5
   },
   "learn": {
@@ -714,10 +734,10 @@
       "sensory": 0.45
     },
     "simona_weight": 0.16000000000000003,
-    "spike_mean": 3.0,
-    "count": 1,
-    "last_tick": 0,
-    "trust": 0.5
+    "spike_mean": 2.0700000000000003,
+    "count": 2,
+    "last_tick": 17826,
+    "trust": 0.519375
   },
   "protect": {
     "region_pattern": {
@@ -778,5 +798,8099 @@
     "count": 1,
     "last_tick": 0,
     "trust": 0.5
+  },
+  "mama": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999995,
+      "temporal_s": 0.6499999999999978,
+      "broca_s": 0.699999999999999,
+      "insula_s": 0.5499999999999978,
+      "pfc_s": 0.2999999999999995,
+      "hippocampus_s": 0.39999999999999947
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999999998,
+    "count": 884,
+    "last_tick": 9668,
+    "trust": 0.599999999999999
+  },
+  "oo": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999995,
+      "temporal_s": 0.6499999999999978,
+      "broca_s": 0.699999999999999,
+      "insula_s": 0.5499999999999978,
+      "pfc_s": 0.2999999999999995,
+      "hippocampus_s": 0.39999999999999947
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999999998,
+    "count": 692,
+    "last_tick": 553203,
+    "trust": 0.599999999999999
+  },
+  "pa": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999986479257,
+      "temporal_s": 0.6499999982423021,
+      "broca_s": 0.699999998107096,
+      "insula_s": 0.5499999985127172,
+      "pfc_s": 0.2999999991887554,
+      "hippocampus_s": 0.39999999891834065
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9999999945917029,
+    "count": 324,
+    "last_tick": 614314,
+    "trust": 0.5999999983775108
+  },
+  "ma": {
+    "region_pattern": {
+      "thalamus_s": 0.4999123601163051,
+      "temporal_s": 0.6498860681511955,
+      "broca_s": 0.6998773041628272,
+      "insula_s": 0.5499035961279344,
+      "pfc_s": 0.29994741606978303,
+      "hippocampus_s": 0.39992988809304403
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9996494404652203,
+    "count": 108,
+    "last_tick": 484875,
+    "trust": 0.5998948321395661
+  },
+  "ba": {
+    "region_pattern": {
+      "thalamus_s": 0.49999994568735495,
+      "temporal_s": 0.6499999293935602,
+      "broca_s": 0.6999999239622969,
+      "insula_s": 0.5499999402560892,
+      "pfc_s": 0.2999999674124129,
+      "hippocampus_s": 0.39999995654988396
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9999997827494198,
+    "count": 252,
+    "last_tick": 753,
+    "trust": 0.5999999348248258
+  },
+  "**hello**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "means": {
+    "region_pattern": {},
+    "simona_weight": 0.5831115013973608,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26874,
+    "trust": 0.3815625
+  },
+  "**greeting**\u2014something": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "you": {
+    "region_pattern": {},
+    "simona_weight": 0.5853866112705781,
+    "spike_mean": 0.5587119985555907,
+    "count": 8,
+    "last_tick": 158,
+    "trust": 0.5121526653426249
+  },
+  "say": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 2686,
+    "trust": 0.4638021093750001
+  },
+  "when": {
+    "region_pattern": {},
+    "simona_weight": 0.5788893767467009,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 258,
+    "trust": 0.275
+  },
+  "meet": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "someone": {
+    "region_pattern": {},
+    "simona_weight": 0.5587683139584001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "start": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.526787765625,
+    "count": 5,
+    "last_tick": 26498,
+    "trust": 0.4828887851562501
+  },
+  "phone": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "conversation.[1][3][4": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "can": {
+    "region_pattern": {},
+    "simona_weight": 0.5988394312131701,
+    "spike_mean": 0.5409726360351562,
+    "count": 6,
+    "last_tick": 212,
+    "trust": 0.4958915830322267
+  },
+  "also": {
+    "region_pattern": {},
+    "simona_weight": 0.5831115013973608,
+    "spike_mean": 0.526787765625,
+    "count": 5,
+    "last_tick": 212,
+    "trust": 0.4828887851562501
+  },
+  "used": {
+    "region_pattern": {
+      "thalamus": 0.06428571428571428,
+      "temporal": 0.11785714285714285,
+      "hippocampus": 0.11785714285714285,
+      "acc": 0.05357142857142857,
+      "pfc": 0.06428571428571428,
+      "broca": 0.09642857142857142,
+      "insula": 0.06428571428571428
+    },
+    "simona_weight": 0.5944659767778873,
+    "spike_mean": 0.52611609375,
+    "count": 5,
+    "last_tick": 288,
+    "trust": 0.4715588002232144
+  },
+  "to": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "**get": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "someone\u2019s": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "attention**[1][3": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "express": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "**surprise**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "**puzzlement**[1][3][4": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "sound": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.5758063452348651,
+    "count": 12,
+    "last_tick": 27579,
+    "trust": 0.5278224831319599
+  },
+  "**sarcastic**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "has": {
+    "region_pattern": {},
+    "simona_weight": 0.589727027772359,
+    "spike_mean": 0.5506901888183593,
+    "count": 7,
+    "last_tick": 288,
+    "trust": 0.49764867010730574
+  },
+  "missed": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "something": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 2686,
+    "trust": 0.3815625
+  },
+  "obvious[1][3": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "pronunciation": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 158,
+    "trust": 0.433778125
+  },
+  "**/h\u0259\u02c8lo\u028a/**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "american": {
+    "region_pattern": {},
+    "simona_weight": 0.5092293632,
+    "spike_mean": 0.5511384598291015,
+    "count": 7,
+    "last_tick": 288,
+    "trust": 0.5052102548433431
+  },
+  "english": {
+    "region_pattern": {
+      "thalamus": 0.024999999999999998,
+      "temporal": 0.04583333333333334,
+      "hippocampus": 0.04583333333333334,
+      "acc": 0.020833333333333332,
+      "pfc": 0.024999999999999998,
+      "broca": 0.0375,
+      "insula": 0.024999999999999998
+    },
+    "simona_weight": 0.5988394312131701,
+    "spike_mean": 0.5836780752848945,
+    "count": 16,
+    "last_tick": 2687,
+    "trust": 0.5308715690111535
+  },
+  "simple": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.5587119985555907,
+    "count": 8,
+    "last_tick": 27503,
+    "trust": 0.5121526653426249
+  },
+  "phonetic": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.5587119985555907,
+    "count": 8,
+    "last_tick": 27579,
+    "trust": 0.5121526653426249
+  },
+  "spelling": {
+    "region_pattern": {},
+    "simona_weight": 0.5587683139584001,
+    "spike_mean": 0.5511384598291015,
+    "count": 7,
+    "last_tick": 27579,
+    "trust": 0.5052102548433431
+  },
+  "**huh-loh**.[2][1": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "src": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "https://www.dictionary.com/browse/hello": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "https://www.youtube.com/watch?v=tcexwm3rumi": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "https://dictionary.cambridge.org/us/dictionary/english/hello": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "https://www.merriam-webster.com/dictionary/hello": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1087,
+    "trust": 0.0
+  },
+  "**\u201chow\u201d**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "question": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "word": {
+    "region_pattern": {
+      "thalamus": 0.056249999999999994,
+      "temporal": 0.10312500000000001,
+      "hippocampus": 0.10312500000000001,
+      "acc": 0.046875,
+      "pfc": 0.056249999999999994,
+      "broca": 0.084375,
+      "insula": 0.056249999999999994
+    },
+    "simona_weight": 0.5913530887154488,
+    "spike_mean": 0.5398466894531251,
+    "count": 6,
+    "last_tick": 267,
+    "trust": 0.47757709926060266
+  },
+  "mainly": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "adverb": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "that": {
+    "region_pattern": {},
+    "simona_weight": 0.5944659767778873,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 267,
+    "trust": 0.433778125
+  },
+  "usually": {
+    "region_pattern": {},
+    "simona_weight": 0.5600715013973607,
+    "spike_mean": 0.5506901888183593,
+    "count": 7,
+    "last_tick": 267,
+    "trust": 0.49764867010730574
+  },
+  "**\u201cin": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "what": {
+    "region_pattern": {},
+    "simona_weight": 0.5864892011178886,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "way\u201d**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "**\u201cto": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "extent/degree.\u201d**[2][3][4": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "key": {
+    "region_pattern": {},
+    "simona_weight": 0.5831115013973608,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "uses": {
+    "region_pattern": {},
+    "simona_weight": 0.5736117209333761,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "**in": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "way": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "means:**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "\u201chow": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "did": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "happen?\u201d": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "happen?[2][4": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "**to": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "extent": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "degree": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "amount:**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "tall": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "he?\u201d": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "much": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "does": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27206,
+    "trust": 0.275
+  },
+  "cost?\u201d[2][3][4": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "state": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "condition:**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "are": {
+    "region_pattern": {},
+    "simona_weight": 0.5587683139584001,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 2686,
+    "trust": 0.4638021093750001
+  },
+  "you?\u201d": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1366,
+    "trust": 0.0
+  },
+  "**\u201care\u201d**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "the": {
+    "region_pattern": {},
+    "simona_weight": 0.5999914365138438,
+    "spike_mean": 0.5862132616460097,
+    "count": 18,
+    "last_tick": 288,
+    "trust": 0.5373621565088426
+  },
+  "present\u2011tense": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "form": {
+    "region_pattern": {},
+    "simona_weight": 0.5864892011178886,
+    "spike_mean": 0.5404311005859375,
+    "count": 6,
+    "last_tick": 288,
+    "trust": 0.48675678267996664
+  },
+  "verb": {
+    "region_pattern": {},
+    "simona_weight": 0.5194693632,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27206,
+    "trust": 0.3815625
+  },
+  "be\u201d**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "with": {
+    "region_pattern": {},
+    "simona_weight": 0.5977332640882227,
+    "spike_mean": 0.5727942837982419,
+    "count": 11,
+    "last_tick": 288,
+    "trust": 0.5250614268150553
+  },
+  "**you": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "we": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "they": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25954,
+    "trust": 0.275
+  },
+  "and": {
+    "region_pattern": {},
+    "simona_weight": 0.5996957638559454,
+    "spike_mean": 0.5691114139194013,
+    "count": 10,
+    "last_tick": 288,
+    "trust": 0.5216854627594514
+  },
+  "plural": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 27207,
+    "trust": 0.433778125
+  },
+  "nouns**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "less": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6835,
+    "trust": 0.0
+  },
+  "common": {
+    "region_pattern": {},
+    "simona_weight": 0.5788893767467009,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 212,
+    "trust": 0.4638021093750001
+  },
+  "meaning": {
+    "region_pattern": {},
+    "simona_weight": 0.5891913608943109,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "**unit": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "area**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "**1": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "most": {
+    "region_pattern": {
+      "thalamus": 0.15088778409090906,
+      "temporal": 0.27662760416666665,
+      "hippocampus": 0.27662760416666665,
+      "acc": 0.12573982007575757,
+      "pfc": 0.15088778409090906,
+      "broca": 0.22633167613636365,
+      "insula": 0.15088778409090906
+    },
+    "simona_weight": 0.5535254339584,
+    "spike_mean": 0.5636105383356268,
+    "count": 9,
+    "last_tick": 288,
+    "trust": 0.49149502945917306
+  },
+  "meaning)**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "\u201care\u201d": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "**present": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "tense": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "plural**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "**2nd": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "person": {
+    "region_pattern": {},
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27206,
+    "trust": 0.3815625
+  },
+  "singular**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "**\u201cbe.\u201d**[1][2][5": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "use": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "**are**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "**you**": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 3043,
+    "trust": 0.0
+  },
+  "singular": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.47062499999999996,
+    "count": 3,
+    "last_tick": 27206,
+    "trust": 0.41846875
+  },
+  "baba": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999995,
+      "temporal_s": 0.6499999999999978,
+      "broca_s": 0.699999999999999,
+      "insula_s": 0.5499999999999978,
+      "pfc_s": 0.2999999999999995,
+      "hippocampus_s": 0.39999999999999947
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999999998,
+    "count": 844,
+    "last_tick": 352,
+    "trust": 0.599999999999999
+  },
+  "ta": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999995,
+      "temporal_s": 0.6499999999999978,
+      "broca_s": 0.699999999999999,
+      "insula_s": 0.5499999999999978,
+      "pfc_s": 0.2999999999999995,
+      "hippocampus_s": 0.39999999999999947
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999999998,
+    "count": 684,
+    "last_tick": 22610,
+    "trust": 0.599999999999999
+  },
+  "lala": {
+    "region_pattern": {
+      "thalamus_s": 0.4999861722479665,
+      "temporal_s": 0.6499820239223553,
+      "broca_s": 0.6999806411471531,
+      "insula_s": 0.5499847894727621,
+      "pfc_s": 0.29999170334877995,
+      "hippocampus_s": 0.3999889377983731
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999944688991866,
+    "count": 144,
+    "last_tick": 485749,
+    "trust": 0.5999834066975599
+  },
+  "na": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999995,
+      "temporal_s": 0.6499999999999978,
+      "broca_s": 0.699999999999999,
+      "insula_s": 0.5499999999999978,
+      "pfc_s": 0.2999999999999995,
+      "hippocampus_s": 0.39999999999999947
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999999998,
+    "count": 936,
+    "last_tick": 679847,
+    "trust": 0.599999999999999
+  },
+  "nana": {
+    "region_pattern": {
+      "thalamus_s": 0.49999999999468925,
+      "temporal_s": 0.6499999999930949,
+      "broca_s": 0.6999999999925649,
+      "insula_s": 0.549999999994157,
+      "pfc_s": 0.2999999999968136,
+      "hippocampus_s": 0.3999999999957515
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999978757,
+    "count": 432,
+    "last_tick": 521598,
+    "trust": 0.5999999999936272
+  },
+  "ah": {
+    "region_pattern": {
+      "thalamus_s": 0.49999999999468925,
+      "temporal_s": 0.6499999999930949,
+      "broca_s": 0.6999999999925649,
+      "insula_s": 0.549999999994157,
+      "pfc_s": 0.2999999999968136,
+      "hippocampus_s": 0.3999999999957515
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999978757,
+    "count": 432,
+    "last_tick": 644997,
+    "trust": 0.5999999999936272
+  },
+  "da": {
+    "region_pattern": {
+      "thalamus_s": 0.4999861722479665,
+      "temporal_s": 0.6499820239223553,
+      "broca_s": 0.6999806411471531,
+      "insula_s": 0.5499847894727621,
+      "pfc_s": 0.29999170334877995,
+      "hippocampus_s": 0.3999889377983731
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999944688991866,
+    "count": 144,
+    "last_tick": 671147,
+    "trust": 0.5999834066975599
+  },
+  "eh": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999792,
+      "temporal_s": 0.6499999999999718,
+      "broca_s": 0.6999999999999708,
+      "insula_s": 0.5499999999999758,
+      "pfc_s": 0.2999999999999875,
+      "hippocampus_s": 0.3999999999999833
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9999999999999167,
+    "count": 540,
+    "last_tick": 464321,
+    "trust": 0.599999999999975
+  },
+  "oh": {
+    "region_pattern": {
+      "thalamus_s": 0.4999123601163051,
+      "temporal_s": 0.6498860681511955,
+      "broca_s": 0.6998773041628272,
+      "insula_s": 0.5499035961279344,
+      "pfc_s": 0.29994741606978303,
+      "hippocampus_s": 0.39992988809304403
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9996494404652203,
+    "count": 108,
+    "last_tick": 587737,
+    "trust": 0.5998948321395661
+  },
+  "ga": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999995,
+      "temporal_s": 0.6499999999999978,
+      "broca_s": 0.699999999999999,
+      "insula_s": 0.5499999999999978,
+      "pfc_s": 0.2999999999999995,
+      "hippocampus_s": 0.39999999999999947
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.999999999999998,
+    "count": 828,
+    "last_tick": 590876,
+    "trust": 0.599999999999999
+  },
+  "dada": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999999999614,
+      "temporal_s": 0.6499999999999487,
+      "broca_s": 0.6999999999999459,
+      "insula_s": 0.5499999999999562,
+      "pfc_s": 0.2999999999999768,
+      "hippocampus_s": 0.39999999999996905
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9999999999998457,
+    "count": 528,
+    "last_tick": 2759,
+    "trust": 0.5999999999999536
+  },
+  "ee": {
+    "region_pattern": {
+      "thalamus_s": 0.4999999986479257,
+      "temporal_s": 0.6499999982423021,
+      "broca_s": 0.699999998107096,
+      "insula_s": 0.5499999985127172,
+      "pfc_s": 0.2999999991887554,
+      "hippocampus_s": 0.39999999891834065
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9999999945917029,
+    "count": 324,
+    "last_tick": 609414,
+    "trust": 0.5999999983775108
+  },
+  "la": {
+    "region_pattern": {
+      "thalamus_s": 0.49647951732225054,
+      "temporal_s": 0.6454233725189253,
+      "broca_s": 0.6950713242511507,
+      "insula_s": 0.5461274690544753,
+      "pfc_s": 0.29788771039335044,
+      "hippocampus_s": 0.3971836138578004
+    },
+    "simona_weight": 0.0,
+    "spike_mean": 1.9859180692890022,
+    "count": 36,
+    "last_tick": 516211,
+    "trust": 0.5957754207867009
+  },
+  "hello": {
+    "region_pattern": {
+      "thalamus": 0.15,
+      "temporal": 0.275,
+      "hippocampus": 0.275,
+      "acc": 0.125,
+      "pfc": 0.15,
+      "broca": 0.225,
+      "insula": 0.15
+    },
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2687,
+    "trust": 0.25
+  },
+  "greeting": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "salutation": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "conversation": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "answer": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "more": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 181,
+    "trust": 0.433778125
+  },
+  "specifically": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "mean": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 2686,
+    "trust": 0.3815625
+  },
+  "polite": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "expression": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "welcome": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "telephone": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "call": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "attract": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "attention": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "anyone": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "there": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "exclamation": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "surprise": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "informally": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "suggest": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "missing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "obvious": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "about": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 313,
+    "trust": 0.0
+  },
+  "etymologically": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "related": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "older": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "forms": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 0,
+    "trust": 0.3815625
+  },
+  "like": {
+    "region_pattern": {},
+    "simona_weight": 0.5955727814223098,
+    "spike_mean": 0.5804079279677462,
+    "count": 14,
+    "last_tick": 267,
+    "trust": 0.532040600637101
+  },
+  "hallo": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "hollo": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "possibly": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "french": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1474,
+    "trust": 0.0
+  },
+  "how": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "very": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 25000,
+    "trust": 0.433778125
+  },
+  "method": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "cook": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "this": {
+    "region_pattern": {},
+    "simona_weight": 0.5355754905600001,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "tired": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "condition": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "words": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "far": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "many": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "old": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "people": {
+    "region_pattern": {},
+    "simona_weight": 0.5194693632,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 288,
+    "trust": 0.3815625
+  },
+  "for": {
+    "region_pattern": {},
+    "simona_weight": 0.5788893767467009,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 131,
+    "trust": 0.3815625
+  },
+  "emphasis": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "tell": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "happy": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "conjunction": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "manner": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "which": {
+    "region_pattern": {},
+    "simona_weight": 0.48333670400000006,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 26627,
+    "trust": 0.4638021093750001
+  },
+  "met": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 1692,
+    "trust": 0.0
+  },
+  "noun": {
+    "region_pattern": {},
+    "simona_weight": 0.5194693632,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27207,
+    "trust": 0.3815625
+  },
+  "need": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.47062499999999996,
+    "count": 3,
+    "last_tick": 27579,
+    "trust": 0.41846875
+  },
+  "understand": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "pronounced": {
+    "region_pattern": {},
+    "simona_weight": 0.5600715013973607,
+    "spike_mean": 0.575709181962716,
+    "count": 12,
+    "last_tick": 158,
+    "trust": 0.5223762739420137
+  },
+  "british": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.5584676908547362,
+    "count": 8,
+    "last_tick": 27504,
+    "trust": 0.5044287166168416
+  },
+  "ipa": {
+    "region_pattern": {},
+    "simona_weight": 0.5788893767467009,
+    "spike_mean": 0.5783063562272623,
+    "count": 13,
+    "last_tick": 158,
+    "trust": 0.5301141598749908
+  },
+  "noh-vuh": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16022,
+    "trust": 0.275
+  },
+  "slightly": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 23323,
+    "trust": 0.3815625
+  },
+  "different": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16458,
+    "trust": 0.275
+  },
+  "indefinite": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "pronoun": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26401,
+    "trust": 0.275
+  },
+  "unspecified": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "unknown": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "thing": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "amount": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "speaker": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "not": {
+    "region_pattern": {},
+    "simona_weight": 0.5355754905600001,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 267,
+    "trust": 0.433778125
+  },
+  "cannot": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "chooses": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "specific": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "shoe": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "sum-thing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "main": {
+    "region_pattern": {},
+    "simona_weight": 0.45817088000000006,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 108,
+    "trust": 0.3662500000000001
+  },
+  "knows": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "don": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "than": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27207,
+    "trust": 0.3815625
+  },
+  "hundred": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "informal": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "importance": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "impressiveness": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "really": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "somewhat": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "some": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "test": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "was": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 258,
+    "trust": 0.275
+  },
+  "difficult": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "combining": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6645,
+    "trust": 0.0
+  },
+  "contraction": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "short": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25780,
+    "trust": 0.0
+  },
+  "example": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27206,
+    "trust": 0.3815625
+  },
+  "sounds": {
+    "region_pattern": {},
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 27503,
+    "trust": 0.433778125
+  },
+  "eye-m": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6835,
+    "trust": 0.0
+  },
+  "everyday": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25954,
+    "trust": 0.275
+  },
+  "formal": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6835,
+    "trust": 0.0
+  },
+  "instead": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6835,
+    "trust": 0.0
+  },
+  "writing": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "saying": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 6835,
+    "trust": 0.0
+  },
+  "being": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 212,
+    "trust": 0.3815625
+  },
+  "spoken": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "written": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "generally": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7112,
+    "trust": 0.0
+  },
+  "general": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17826,
+    "trust": 0.275
+  },
+  "meant": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 158,
+    "trust": 0.275
+  },
+  "phrase": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "checking": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7112,
+    "trust": 0.0
+  },
+  "reacting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7112,
+    "trust": 0.0
+  },
+  "information": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "whole": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "true": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7112,
+    "trust": 0.0
+  },
+  "lonely": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "feeling": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "sad": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "unhappy": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "because": {
+    "region_pattern": {},
+    "simona_weight": 0.5194693632,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "without": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "other": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "describing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "place": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "empty": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "isolated": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "frequented": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "she": {
+    "region_pattern": {},
+    "simona_weight": 0.5194693632,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27206,
+    "trust": 0.3815625
+  },
+  "feels": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "since": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "her": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26627,
+    "trust": 0.275
+  },
+  "friends": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "moved": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "away": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "road": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "few": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "around": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "want": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "explain": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "difference": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "between": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "alone": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 7334,
+    "trust": 0.0
+  },
+  "room": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "two": {
+    "region_pattern": {},
+    "simona_weight": 0.33424,
+    "spike_mean": 0.504603125,
+    "count": 4,
+    "last_tick": 27207,
+    "trust": 0.4514278645833334
+  },
+  "commonest": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "part": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27579,
+    "trust": 0.3815625
+  },
+  "inside": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "building": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "its": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "own": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "walls": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "floor": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "ceiling": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "particular": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "purpose": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "bedroom": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "kitchen": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "living": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "space": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "isn": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "enough": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "car": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "opportunity": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "possibility": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "improvement": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "sometimes": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 288,
+    "trust": 0.433778125
+  },
+  "refers": {
+    "region_pattern": {
+      "thalamus": 0.16874999999999998,
+      "temporal": 0.309375,
+      "hippocampus": 0.309375,
+      "acc": 0.140625,
+      "pfc": 0.16874999999999998,
+      "broca": 0.253125,
+      "insula": 0.16874999999999998
+    },
+    "simona_weight": 0.35424,
+    "spike_mean": 0.46874999999999994,
+    "count": 3,
+    "last_tick": 131,
+    "trust": 0.40156249999999993
+  },
+  "all": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 133,
+    "trust": 0.3815625
+  },
+  "laughed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8049,
+    "trust": 0.0
+  },
+  "past": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "first": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27579,
+    "trust": 0.3815625
+  },
+  "third": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27206,
+    "trust": 0.275
+  },
+  "essential": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "points": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "speech": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.5409726360351562,
+    "count": 6,
+    "last_tick": 26498,
+    "trust": 0.4958915830322267
+  },
+  "function": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "shows": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "situation": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "grammar": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "linking": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "auxiliary": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "helping": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "continuous": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "reading": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "whenever": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8270,
+    "trust": 0.0
+  },
+  "into": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 2686,
+    "trust": 0.4638021093750001
+  },
+  "become": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "give": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "hand": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "offer": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "provide": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "else": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "but": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 131,
+    "trust": 0.275
+  },
+  "meanings": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.47062499999999996,
+    "count": 3,
+    "last_tick": 27206,
+    "trust": 0.41846875
+  },
+  "gave": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "book": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "handed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "presented": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "supply": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "teacher": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "homework": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27206,
+    "trust": 0.275
+  },
+  "provided": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "cause": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "produce": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "medicine": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "gives": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "headache": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "causes": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "allow": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "grant": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "him": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "permission": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "allowed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "communicate": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8695,
+    "trust": 0.0
+  },
+  "one": {
+    "region_pattern": {},
+    "simona_weight": 0.548460392448,
+    "spike_mean": 0.526787765625,
+    "count": 5,
+    "last_tick": 133,
+    "trust": 0.4828887851562501
+  },
+  "both": {
+    "region_pattern": {},
+    "simona_weight": 0.45817088000000006,
+    "spike_mean": 0.52611609375,
+    "count": 5,
+    "last_tick": 27503,
+    "trust": 0.4715588002232144
+  },
+  "subject": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "object": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.4125,
+    "count": 2,
+    "last_tick": 26401,
+    "trust": 0.359375
+  },
+  "kind": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "saw": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8888,
+    "trust": 0.0
+  },
+  "generic": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8888,
+    "trust": 0.0
+  },
+  "never": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8888,
+    "trust": 0.0
+  },
+  "know": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8888,
+    "trust": 0.0
+  },
+  "will": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 8888,
+    "trust": 0.0
+  },
+  "happen": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "sih-moh-nuh": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9105,
+    "trust": 0.0
+  },
+  "rounded": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26498,
+    "trust": 0.275
+  },
+  "stress": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 23663,
+    "trust": 0.3815625
+  },
+  "second": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23663,
+    "trust": 0.275
+  },
+  "syllable": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 27579,
+    "trust": 0.4638021093750001
+  },
+  "si-": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9105,
+    "trust": 0.0
+  },
+  "several": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 212,
+    "trust": 0.275
+  },
+  "depending": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 158,
+    "trust": 0.3815625
+  },
+  "context": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 158,
+    "trust": 0.275
+  },
+  "physics": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "physical": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "world": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "three": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "dimensional": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "expanse": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "objects": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "events": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "exist": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "move": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 26498,
+    "trust": 0.433778125
+  },
+  "philosophy": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "basic": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 25403,
+    "trust": 0.3815625
+  },
+  "arena": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "positions": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "distances": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "directions": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "outer": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "astronomy": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "region": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "beyond": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 231,
+    "trust": 0.275
+  },
+  "earth": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "atmosphere": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "almost": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "perfect": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "vacuum": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "containing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "planets": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "stars": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "galaxies": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "gas": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "dust": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "often": {
+    "region_pattern": {},
+    "simona_weight": 0.5505763139584,
+    "spike_mean": 0.526787765625,
+    "count": 5,
+    "last_tick": 288,
+    "trust": 0.4828887851562501
+  },
+  "thought": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "begin": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9376,
+    "trust": 0.0
+  },
+  "wait": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "commonly": {
+    "region_pattern": {
+      "thalamus": 0.22265624999999997,
+      "temporal": 0.408203125,
+      "hippocampus": 0.408203125,
+      "acc": 0.185546875,
+      "pfc": 0.22265624999999997,
+      "broca": 0.333984375,
+      "insula": 0.22265624999999997
+    },
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.5226562499999999,
+    "count": 5,
+    "last_tick": 288,
+    "trust": 0.44199218749999997
+  },
+  "stay": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "delay": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "doing": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26627,
+    "trust": 0.275
+  },
+  "until": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "happens": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "arrives": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "where": {
+    "region_pattern": {},
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "let": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "time": {
+    "region_pattern": {},
+    "simona_weight": 0.4267136000000001,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 131,
+    "trust": 0.3815625
+  },
+  "pass": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "waited": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "action": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "later": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "before": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 133,
+    "trust": 0.275
+  },
+  "making": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 133,
+    "trust": 0.275
+  },
+  "decision": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "ready": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "available": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "your": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 26874,
+    "trust": 0.433778125
+  },
+  "waiting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "outside": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "serve": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "customers": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "restaurant": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 9564,
+    "trust": 0.0
+  },
+  "standard": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 2686,
+    "trust": 0.4638021093750001
+  },
+  "fah-th": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16966,
+    "trust": 0.275
+  },
+  "fah-thuh": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11774,
+    "trust": 0.0
+  },
+  "breakdown": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26142,
+    "trust": 0.3815625
+  },
+  "fish": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16966,
+    "trust": 0.275
+  },
+  "long": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.5059659375,
+    "count": 4,
+    "last_tick": 27579,
+    "trust": 0.4638021093750001
+  },
+  "spa": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16966,
+    "trust": 0.275
+  },
+  "mother": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16966,
+    "trust": 0.275
+  },
+  "softer": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11774,
+    "trust": 0.0
+  },
+  "tight": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "firm": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "secure": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "held": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "fixed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "firmly": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "doesn": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "easily": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "lid": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "knot": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "close-fitting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "clothes": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "shoes": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "fit": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "closely": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "uncomfortably": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "jeans": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "leeway": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "margin": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "squeeze": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "schedule": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "money": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "strict": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "controlled": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "close": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 133,
+    "trust": 0.275
+  },
+  "detail": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "security": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "script": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "relationship": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "slang": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 11999,
+    "trust": 0.0
+  },
+  "refer": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "surprised": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 12180,
+    "trust": 0.0
+  },
+  "sure": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 12180,
+    "trust": 0.0
+  },
+  "facts": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "entire": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 12180,
+    "trust": 0.0
+  },
+  "working": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "job": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26874,
+    "trust": 0.3815625
+  },
+  "employed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "operating": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "functioning": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "intended": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "present": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27206,
+    "trust": 0.3815625
+  },
+  "participle": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "work": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "store": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "today": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "adjective": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "population": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "who": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "earns": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "wages": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "salary": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "machines": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "systems": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "machine": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "parts": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "supposed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "ideas": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "plans": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "numbers": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "hypothesis": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 15949,
+    "trust": 0.0
+  },
+  "same": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 267,
+    "trust": 0.3815625
+  },
+  "learners": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16022,
+    "trust": 0.275
+  },
+  "just": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 24739,
+    "trust": 0.3815625
+  },
+  "improvments": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "misspelling": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "improvements": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "changes": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "make": {
+    "region_pattern": {},
+    "simona_weight": 0.27280000000000004,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 0,
+    "trust": 0.3815625
+  },
+  "better": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "act": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "process": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 181,
+    "trust": 0.275
+  },
+  "fixing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "house": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "getting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "higher": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "scores": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 16122,
+    "trust": 0.0
+  },
+  "si-moh-nuh": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 23663,
+    "trust": 0.3815625
+  },
+  "italian": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 288,
+    "trust": 0.3815625
+  },
+  "original": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "see-moh-nah": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 158,
+    "trust": 0.3815625
+  },
+  "clear": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 24739,
+    "trust": 0.433778125
+  },
+  "nah": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16458,
+    "trust": 0.275
+  },
+  "end": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 27579,
+    "trust": 0.3815625
+  },
+  "syllables": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16966,
+    "trust": 0.275
+  },
+  "gae": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16966,
+    "trust": 0.275
+  },
+  "fah": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 16966,
+    "trust": 0.275
+  },
+  "literally": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "loose": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "grip": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "fitting": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "too": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 258,
+    "trust": 0.275
+  },
+  "body": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17409,
+    "trust": 0.275
+  },
+  "packed": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "together": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25576,
+    "trust": 0.275
+  },
+  "standing": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "groups": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "train": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "hard": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "deal": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "spot": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "score": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "outcome": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "game": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "election": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17410,
+    "trust": 0.275
+  },
+  "listener": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "reader": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "second-person": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "addressing": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "either": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "friend": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "invited": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17825,
+    "trust": 0.275
+  },
+  "role": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26874,
+    "trust": 0.3815625
+  },
+  "look": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 267,
+    "trust": 0.275
+  },
+  "nice": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17826,
+    "trust": 0.275
+  },
+  "accept": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17826,
+    "trust": 0.275
+  },
+  "these": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 25097,
+    "trust": 0.3815625
+  },
+  "things": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 212,
+    "trust": 0.275
+  },
+  "get": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 17826,
+    "trust": 0.275
+  },
+  "rhymes": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 25866,
+    "trust": 0.3815625
+  },
+  "strong": {
+    "region_pattern": {},
+    "simona_weight": 0.38339200000000007,
+    "spike_mean": 0.504603125,
+    "count": 4,
+    "last_tick": 26874,
+    "trust": 0.4514278645833334
+  },
+  "weak": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 24739,
+    "trust": 0.3815625
+  },
+  "reduced": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 25097,
+    "trust": 0.433778125
+  },
+  "connected": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "native": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "speakers": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "reduce": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "whater": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "quick": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 24739,
+    "trust": 0.3815625
+  },
+  "low": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 22956,
+    "trust": 0.0
+  },
+  "letter": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "reduces": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24573,
+    "trust": 0.275
+  },
+  "weaker": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 23323,
+    "trust": 0.3815625
+  },
+  "sentences": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24838,
+    "trust": 0.275
+  },
+  "here": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 2686,
+    "trust": 0.275
+  },
+  "transcription": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23174,
+    "trust": 0.0
+  },
+  "yoo": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 26498,
+    "trust": 0.433778125
+  },
+  "beginning": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24838,
+    "trust": 0.0
+  },
+  "yes": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 25780,
+    "trust": 0.3815625
+  },
+  "glide": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25780,
+    "trust": 0.0
+  },
+  "food": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 25780,
+    "trust": 0.3815625
+  },
+  "while": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "rounding": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23174,
+    "trust": 0.0
+  },
+  "lips": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "unstressed": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "similar": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "yuh": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "especially": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 212,
+    "trust": 0.3815625
+  },
+  "phrases": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "see": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27503,
+    "trust": 0.275
+  },
+  "thank": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23174,
+    "trust": 0.0
+  },
+  "yule": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "clearly": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24573,
+    "trust": 0.275
+  },
+  "tongue": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "high": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "near": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "roof": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "mouth": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "front": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26498,
+    "trust": 0.3815625
+  },
+  "raised": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "relaxed": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "round": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "push": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "forward": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23323,
+    "trust": 0.275
+  },
+  "back": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 267,
+    "trust": 0.275
+  },
+  "closer": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 23663,
+    "trust": 0.275
+  },
+  "see-maw-nah": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23386,
+    "trust": 0.0
+  },
+  "staht": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24016,
+    "trust": 0.275
+  },
+  "audible": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23565,
+    "trust": 0.0
+  },
+  "top": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25576,
+    "trust": 0.0
+  },
+  "optional": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23565,
+    "trust": 0.0
+  },
+  "details": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 212,
+    "trust": 0.275
+  },
+  "typically": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "possessive": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "belonging": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "examples": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26202,
+    "trust": 0.0
+  },
+  "name": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "belongs": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "followed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "have": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "apostrophe": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "confuse": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23745,
+    "trust": 0.0
+  },
+  "sentence": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "group": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "expresses": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "complete": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "such": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "statement": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "command": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "punishment": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "given": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "court": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "after": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 151,
+    "trust": 0.0
+  },
+  "found": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "guilty": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 23930,
+    "trust": 0.0
+  },
+  "stahrt": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24016,
+    "trust": 0.275
+  },
+  "sound-by-sound": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24016,
+    "trust": 0.275
+  },
+  "s-t-ahr-t": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24016,
+    "trust": 0.275
+  },
+  "creating": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 0,
+    "trust": 0.275
+  },
+  "producing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "broadly": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "coming": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "forming": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "violin": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "problems": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "success": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "led": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "made": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "produced": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "jam": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "batch": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "qualities": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "potential": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "makings": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "great": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "musician": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "materials": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "needed": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "cake": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "paper": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "tobacco": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24176,
+    "trust": 0.0
+  },
+  "sence": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "sense": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "correct": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "five": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "senses": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "sight": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "hearing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "smell": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "taste": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "touch": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "awareness": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "danger": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "good": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "judgment": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "modern": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "should": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24355,
+    "trust": 0.0
+  },
+  "problem": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24443,
+    "trust": 0.275
+  },
+  "singer": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "grammatically": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "etc": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24444,
+    "trust": 0.275
+  },
+  "said": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24573,
+    "trust": 0.0
+  },
+  "sounding": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24573,
+    "trust": 0.0
+  },
+  "full": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "roughly": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 158,
+    "trust": 0.433778125
+  },
+  "initial": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "consonant": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 25866,
+    "trust": 0.3815625
+  },
+  "help": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24739,
+    "trust": 0.275
+  },
+  "version": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 24740,
+    "trust": 0.275
+  },
+  "longer": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24838,
+    "trust": 0.0
+  },
+  "weaken": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25780,
+    "trust": 0.0
+  },
+  "accents": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25197,
+    "trust": 0.0
+  },
+  "practice": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 24838,
+    "trust": 0.0
+  },
+  "slowly": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "then": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 267,
+    "trust": 0.275
+  },
+  "ask": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "show": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "introduce": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "interrogative": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "asking": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "nature": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "identity": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "value": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "cost": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "requesting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "repetition": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "didn": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "hear": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "expressing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25000,
+    "trust": 0.0
+  },
+  "youth": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25097,
+    "trust": 0.275
+  },
+  "shorter": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25097,
+    "trust": 0.275
+  },
+  "steps": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25097,
+    "trust": 0.275
+  },
+  "quickly": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25097,
+    "trust": 0.275
+  },
+  "stressed": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25097,
+    "trust": 0.275
+  },
+  "awl": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "vowel": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.4732125,
+    "count": 3,
+    "last_tick": 26142,
+    "trust": 0.433778125
+  },
+  "law": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "ahl": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "ball": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "wall": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "pronunciations": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "thuh": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "duh": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "thee": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "rule": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "apple": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "note": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "depends": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "unique": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "starts": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26142,
+    "trust": 0.275
+  },
+  "honest": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "man": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25576,
+    "trust": 0.0
+  },
+  "silent": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "emphatic": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "may": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25780,
+    "trust": 0.0
+  },
+  "even": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "only": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "solution": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25403,
+    "trust": 0.0
+  },
+  "mall": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25475,
+    "trust": 0.275
+  },
+  "t-ime": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25576,
+    "trust": 0.0
+  },
+  "lime": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25576,
+    "trust": 0.0
+  },
+  "climb": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25576,
+    "trust": 0.0
+  },
+  "tyme": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26142,
+    "trust": 0.275
+  },
+  "t-eye-m": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25576,
+    "trust": 0.0
+  },
+  "eye": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "buy": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26142,
+    "trust": 0.275
+  },
+  "ends": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26142,
+    "trust": 0.275
+  },
+  "smooth": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25576,
+    "trust": 0.0
+  },
+  "next": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "table": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "egg": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 25866,
+    "trust": 0.275
+  },
+  "calling": {
+    "region_pattern": {},
+    "simona_weight": 0.27680000000000005,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 2686,
+    "trust": 0.3662500000000001
+  },
+  "inner": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.41625,
+    "count": 2,
+    "last_tick": 26874,
+    "trust": 0.3662500000000001
+  },
+  "dictionaries": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "define": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "vocation": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "profession": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "trade": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "drawn": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "life": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "path": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "meaningful": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "teaching": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "nursing": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "ministry": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "service": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "religious": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "contexts": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "christian": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "usage": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "summons": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 25954,
+    "trust": 0.0
+  },
+  "tahym": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26142,
+    "trust": 0.275
+  },
+  "every": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27206,
+    "trust": 0.275
+  },
+  "day": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27207,
+    "trust": 0.275
+  },
+  "doe": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27207,
+    "trust": 0.275
+  },
+  "female": {
+    "region_pattern": {
+      "thalamus": 0.11249999999999999,
+      "temporal": 0.20625000000000002,
+      "hippocampus": 0.20625000000000002,
+      "acc": 0.09375,
+      "pfc": 0.11249999999999999,
+      "broca": 0.16875,
+      "insula": 0.11249999999999999
+    },
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.4125,
+    "count": 2,
+    "last_tick": 288,
+    "trust": 0.359375
+  },
+  "deer": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27207,
+    "trust": 0.275
+  },
+  "duz": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27207,
+    "trust": 0.275
+  },
+  "anything": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26401,
+    "trust": 0.25
+  },
+  "any": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26401,
+    "trust": 0.25
+  },
+  "event": {
+    "region_pattern": {
+      "thalamus": 0.20625,
+      "temporal": 0.37812500000000004,
+      "hippocampus": 0.37812500000000004,
+      "acc": 0.171875,
+      "pfc": 0.20625,
+      "broca": 0.309375,
+      "insula": 0.20625
+    },
+    "simona_weight": 0.35424,
+    "spike_mean": 0.4125,
+    "count": 2,
+    "last_tick": 212,
+    "trust": 0.34375
+  },
+  "fact": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "specify": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "choice": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "completely": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "open": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "precisely": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "whatever": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "eat": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "questions": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "negatives": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "thinks": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26401,
+    "trust": 0.0
+  },
+  "ewe": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26498,
+    "trust": 0.275
+  },
+  "touching": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26498,
+    "trust": 0.275
+  },
+  "teeth": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26498,
+    "trust": 0.275
+  },
+  "disturbs": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26627,
+    "trust": 0.25
+  },
+  "third-person": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26627,
+    "trust": 0.25
+  },
+  "disturb": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "interrupt": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "bother": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "upset": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "noise": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "studying": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "worry": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "emotionally": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "scary": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "movie": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "change": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "mess": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "normal": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "order": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "position": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "wind": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "surface": {
+    "region_pattern": {},
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "water": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "alarm": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "sleep": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 26627,
+    "trust": 0.0
+  },
+  "live": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "certain": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "tied": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "urging": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "direction": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "urge": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "impulse": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "toward": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "course": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "type": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "understood": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "guided": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 26874,
+    "trust": 0.275
+  },
+  "god": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.275
+  },
+  "his": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27206,
+    "trust": 0.275
+  },
+  "neee-d": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 27503,
+    "trust": 0.0
+  },
+  "ending": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 27503,
+    "trust": 0.0
+  },
+  "pronounce": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27579,
+    "trust": 0.275
+  },
+  "knead": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27579,
+    "trust": 0.275
+  },
+  "needle": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 27579,
+    "trust": 0.275
+  },
+  "photosynthesis": {
+    "region_pattern": {},
+    "simona_weight": 0.1,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 0,
+    "trust": 0.275
+  },
+  "plants": {
+    "region_pattern": {},
+    "simona_weight": 0.1,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 0,
+    "trust": 0.275
+  },
+  "energy": {
+    "region_pattern": {},
+    "simona_weight": 0.1,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 0,
+    "trust": 0.275
+  },
+  "chlorophyll": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 0,
+    "trust": 0.275
+  },
+  "absorbs": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 0,
+    "trust": 0.275
+  },
+  "photons": {
+    "region_pattern": {},
+    "simona_weight": 0.0,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 0,
+    "trust": 0.275
+  },
+  "thunderstorm": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 0,
+    "trust": 0.0
+  },
+  "humid": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 0,
+    "trust": 0.0
+  },
+  "air": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 0,
+    "trust": 0.0
+  },
+  "rises": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 0,
+    "trust": 0.0
+  },
+  "lightning": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 0,
+    "trust": 0.0
+  },
+  "sudden": {
+    "region_pattern": {
+      "thalamus": 0.25078124999999996,
+      "temporal": 0.459765625,
+      "hippocampus": 0.459765625,
+      "acc": 0.208984375,
+      "pfc": 0.25078124999999996,
+      "broca": 0.376171875,
+      "insula": 0.25078124999999996
+    },
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.5015624999999999,
+    "count": 4,
+    "last_tick": 267,
+    "trust": 0.41796875
+  },
+  "dramatic": {
+    "region_pattern": {
+      "thalamus": 0.23437499999999997,
+      "temporal": 0.4296875,
+      "hippocampus": 0.4296875,
+      "acc": 0.1953125,
+      "pfc": 0.23437499999999997,
+      "broca": 0.3515625,
+      "insula": 0.23437499999999997
+    },
+    "simona_weight": 0.35424,
+    "spike_mean": 0.46874999999999994,
+    "count": 3,
+    "last_tick": 133,
+    "trust": 0.390625
+  },
+  "brightening": {
+    "region_pattern": {
+      "thalamus": 0.25078124999999996,
+      "temporal": 0.459765625,
+      "hippocampus": 0.459765625,
+      "acc": 0.208984375,
+      "pfc": 0.25078124999999996,
+      "broca": 0.376171875,
+      "insula": 0.25078124999999996
+    },
+    "simona_weight": 0.4741708800000001,
+    "spike_mean": 0.5015624999999999,
+    "count": 4,
+    "last_tick": 267,
+    "trust": 0.41796875
+  },
+  "star": {
+    "region_pattern": {
+      "thalamus": 0.15,
+      "temporal": 0.275,
+      "hippocampus": 0.275,
+      "acc": 0.125,
+      "pfc": 0.15,
+      "broca": 0.225,
+      "insula": 0.15
+    },
+    "simona_weight": 0.5194693632,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 267,
+    "trust": 0.25
+  },
+  "binary": {
+    "region_pattern": {},
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "system": {
+    "region_pattern": {},
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "dwarf": {
+    "region_pattern": {},
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "undergoes": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 313,
+    "trust": 0.0
+  },
+  "nuclear": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 313,
+    "trust": 0.0
+  },
+  "explosion": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "pulling": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 137,
+    "trust": 0.0
+  },
+  "from": {
+    "region_pattern": {},
+    "simona_weight": 0.5670146511667201,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "companion": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "comes": {
+    "region_pattern": {},
+    "simona_weight": 0.4993367040000001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "latin": {
+    "region_pattern": {},
+    "simona_weight": 0.5355754905600001,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "stella": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "new": {
+    "region_pattern": {},
+    "simona_weight": 0.5194693632,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "suddenly": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "appear": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "none": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 137,
+    "trust": 0.0
+  },
+  "visible": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "steals": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 151,
+    "trust": 0.0
+  },
+  "hydrogen": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "nearby": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "builds": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 151,
+    "trust": 0.0
+  },
+  "ignites": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "thermonuclear": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "outburst": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 151,
+    "trust": 0.0
+  },
+  "astronomical": {
+    "region_pattern": {
+      "thalamus": 0.20625,
+      "temporal": 0.37812500000000004,
+      "hippocampus": 0.37812500000000004,
+      "acc": 0.171875,
+      "pfc": 0.20625,
+      "broca": 0.309375,
+      "insula": 0.20625
+    },
+    "simona_weight": 0.216,
+    "spike_mean": 0.4125,
+    "count": 2,
+    "last_tick": 212,
+    "trust": 0.34375
+  },
+  "existing": {
+    "region_pattern": {
+      "thalamus": 0.20625,
+      "temporal": 0.37812500000000004,
+      "hippocampus": 0.37812500000000004,
+      "acc": 0.171875,
+      "pfc": 0.20625,
+      "broca": 0.309375,
+      "insula": 0.20625
+    },
+    "simona_weight": 0.216,
+    "spike_mean": 0.4125,
+    "count": 2,
+    "last_tick": 212,
+    "trust": 0.34375
+  },
+  "becomes": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "brighter": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "thousands": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "times": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "luminosity": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "days": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "months": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "gradually": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 233,
+    "trust": 0.0
+  },
+  "fades": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "down": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "brightened": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 233,
+    "trust": 0.0
+  },
+  "newly": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "appeared": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "sky": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "physically": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "occurs": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "pulls": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "temporary": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "caused": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "increases": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 313,
+    "trust": 0.0
+  },
+  "level": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 313,
+    "trust": 0.0
+  },
+  "typical": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "meeting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "starting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "anna": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "speaking": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "out": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "another": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "going": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "criticize": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 2686,
+    "trust": 0.0
+  },
+  "been": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 137,
+    "trust": 0.0
+  },
+  "off": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 137,
+    "trust": 0.0
+  },
+  "appears": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 137,
+    "trust": 0.0
+  },
+  "known": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "novae": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "involve": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 137,
+    "trust": 0.0
+  },
+  "pulled": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 137,
+    "trust": 0.0
+  },
+  "material": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "makes": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "over": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "weeks": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "idea": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "supernova": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "survives": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "again": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "destructive": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 181,
+    "trust": 0.0
+  },
+  "faint": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "previously": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "were": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "dense": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "accumulates": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 258,
+    "trust": 0.0
+  },
+  "feminine": {
+    "region_pattern": {
+      "thalamus": 0.15,
+      "temporal": 0.275,
+      "hippocampus": 0.275,
+      "acc": 0.125,
+      "pfc": 0.15,
+      "broca": 0.225,
+      "insula": 0.15
+    },
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.3,
+    "count": 1,
+    "last_tick": 288,
+    "trust": 0.25
+  },
+  "simon": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "hebrew": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "shimon": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "heard": {
+    "region_pattern": {},
+    "simona_weight": 0.44271360000000004,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "european": {
+    "region_pattern": {},
+    "simona_weight": 0.40339200000000003,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "mediterranean": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "countries": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "italy": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "spain": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "slavic": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "series": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "argentine": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "telenovela": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 108,
+    "trust": 0.0
+  },
+  "film": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 158,
+    "trust": 0.0
+  },
+  "starring": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 108,
+    "trust": 0.0
+  },
+  "laura": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 108,
+    "trust": 0.0
+  },
+  "antonelli": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 108,
+    "trust": 0.0
+  },
+  "cicada": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 108,
+    "trust": 0.0
+  },
+  "genus": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "cicadas": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "asteroid": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "belt": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 108,
+    "trust": 0.0
+  },
+  "stage": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 108,
+    "trust": 0.0
+  },
+  "roots": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "spanish": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "languages": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 158,
+    "trust": 0.0
+  },
+  "including": {
+    "region_pattern": {},
+    "simona_weight": 0.35424,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "though": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 158,
+    "trust": 0.0
+  },
+  "vary": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 158,
+    "trust": 0.0
+  },
+  "ultimately": {
+    "region_pattern": {},
+    "simona_weight": 0.2928,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "various": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 231,
+    "trust": 0.0
+  },
+  "listed": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "origin": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "carrying": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 231,
+    "trust": 0.0
+  },
+  "personal": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 231,
+    "trust": 0.0
+  },
+  "entry": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 231,
+    "trust": 0.0
+  },
+  "databases": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 231,
+    "trust": 0.0
+  },
+  "encyclopedias": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 231,
+    "trust": 0.0
+  },
+  "unseen": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "hydrogen-rich": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 133,
+    "trust": 0.0
+  },
+  "previous": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "brightness": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "naked": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "briefly": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "gets": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 267,
+    "trust": 0.0
+  },
+  "projects": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "works": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "titled": {
+    "region_pattern": {},
+    "simona_weight": 0.216,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "software": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "tool": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "simulation": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "generating": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "electrical": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "distribution": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "grids": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 131,
+    "trust": 0.0
+  },
+  "eastern": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "europe": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "carries": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "main-belt": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 212,
+    "trust": 0.0
+  },
+  "having": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "via": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "described": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "reflecting": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "include": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "category": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
+  },
+  "notable": {
+    "region_pattern": {},
+    "simona_weight": 0.12,
+    "spike_mean": 0.0,
+    "count": 0,
+    "last_tick": 288,
+    "trust": 0.0
   }
 }

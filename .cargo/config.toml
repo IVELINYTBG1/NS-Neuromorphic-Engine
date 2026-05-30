@@ -23,3 +23,18 @@ rustflags = [
     "-C", "opt-level=3",
     "-C", "force-frame-pointers=no",
 ]
+
+# Bake in the venv interpreter so `cargo build` / `cargo run` link against the
+# correct libpython without needing `source .env` first. build.rs requires this
+# and panics if it's missing/wrong. NOT a secret (just a path), so it's safe in
+# this tracked file. Cargo does NOT override a var already in the environment,
+# so an explicit `source .env` still wins. The API key stays OUT of here — it
+# lives only in the gitignored .env and is loaded at runtime by main.rs.
+[env]
+PYO3_PYTHON = "/home/nodevortex/Nova_Simona_Core/.venv-3.11/bin/python"
+
+# Convenience: `cargo start` == optimized run with everything wired in.
+# (Plain `cargo run` also works — the binary self-loads .env at startup and
+# PYO3_PYTHON above satisfies the build, so no `source .env` is ever needed.)
+[alias]
+start = "run --release"

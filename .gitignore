@@ -8,6 +8,7 @@ __pycache__/
 *$py.class
 venv/
 .venv/
+.venv*/
 env/
 *.egg-info/
 .pytest_cache/
@@ -15,8 +16,16 @@ env/
 
 # ── Runtime / generated ──────────────────────────────────────────────
 brain_log.txt
+brain_stderr.log
 crash.log
 *.log
+
+# ── Per-run learned state (regenerated at runtime; keep the seed
+#    semantic_memory.json tracked, but not the volatile binary/JSON state) ──
+*.npz
+babble_*.json
+working_memory_*.json
+voice_esteem_*.json
 
 # ── Environment ──────────────────────────────────────────────────────
 .env

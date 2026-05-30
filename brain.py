@@ -53,13 +53,34 @@ THOUGHT PIPE (fully emergent):
 PHILL: COMPLETELY UNTOUCHED.
 """
 
+import os
+import sys
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Redirect Python stderr + OS fd 2 → log file so noisy library writes
+# (TTS warnings, mediapipe EGL banner, background-thread tracebacks) don't
+# corrupt the TUI. We MUST NOT touch stdout / fd 1 — ratatui in Rust writes
+# the TUI there.
+# ══════════════════════════════════════════════════════════════════════════════
+try:
+    _stderr_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else ".",
+        "brain_stderr.log",
+    )
+    _stderr_fd = open(_stderr_path, "a", buffering=1)
+    sys.stderr = _stderr_fd
+    sys.stdout = _stderr_fd  # Python-level print() goes to log too — Rust uses real fd 1
+    # OS-level fd 2 redirect so C-extension stderr (mediapipe, EGL, etc.)
+    # follows the same path. Fd 1 (stdout) is left alone for the TUI.
+    os.dup2(_stderr_fd.fileno(), 2)
+except Exception:
+    pass
+
 import torch
 import torch.nn as nn
 import numpy as np
 import json
 import time
-import os
-import sys
 import logging as _logging
 import threading
 import multiprocessing
@@ -145,12 +166,17 @@ except ImportError:
     KINEMATIC_VEC_DIM = 16
     _log("vision.py not found — camera disabled")
 
-# ── TTS ───────────────────────────────────────────────────────────────────────
+# ── Audio output (pure-emergence TTS) ────────────────────────────────────────
+# We no longer use any pretrained TTS (XTTS, etc.). The brain produces sound
+# itself via FormantSynth driven by Broca motor spikes through MotorArticulator.
+# sounddevice is the only output dependency — it just pushes float samples to
+# the system audio device.
 try:
-    from tts_engine import create_engine as _create_tts
-    _TTS_AVAILABLE = True
+    import sounddevice as _sd
+    _AUDIO_OUT_AVAILABLE = True
 except ImportError:
-    _TTS_AVAILABLE = False
+    _sd = None
+    _AUDIO_OUT_AVAILABLE = False
 
 # ── Physics constants (unchanged) ─────────────────────────────────────────────
 AUDIO_AMPLIFY   = 15.0
@@ -289,8 +315,8 @@ class BrainRegion:
         self.total_spikes = 0
         self.spike_history = deque([0] * 30, maxlen=30)
 
-    def modulate(self, V_phill: float):
-        new_thr = self.threshold + self.phill_alpha * V_phill
+    def modulate(self, V_phill: float, neuro_offset: float = 0.0):
+        new_thr = self.threshold + self.phill_alpha * V_phill + neuro_offset
         if abs(new_thr - self._cur_thr) > 1e-4:
             old_mem      = self._mem
             self._lif    = _make_lif(self.beta, new_thr)
@@ -522,6 +548,510 @@ class MultimodalImprinter:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# BABBLING CORTEX — pre-linguistic sensorimotor exploration
+# ══════════════════════════════════════════════════════════════════════════════
+
+class BabblingCortex:
+    """
+    The foundation of language: kids don't speak words first, they BABBLE.
+    Random vocal patterns → they hear themselves → "this spike pattern
+    produces this sound" gets Hebbian-wired. Only after this motor map
+    is built can the brain INTENTIONALLY produce sound.
+
+    Mechanism (per personality):
+      1. When boredom is high OR curiosity neuron fires AND TTS is free,
+         sample a phoneme from the inventory (weighted by what previously
+         worked for the current motor spike pattern)
+      2. Speak it through this personality's TTS channel
+      3. Mark a self-speaking window (~1.75s) during which incoming mic
+         is interpreted as our own echo, not external speech
+      4. While in that window, if the mic actually carries sound, perform
+         Hebbian binding: motor signature ↔ phoneme
+      5. Each successful babble also writes the phoneme into the shared
+         semantic dictionary, so the brain can later recognize it when
+         the architect speaks the same sound
+
+    Persisted to babble_<name>.json so plasticity carries across sessions.
+    """
+
+    PHONEMES = [
+        # Vowels — easiest motor patterns
+        "ah", "eh", "ee", "oh", "oo",
+        # CV syllables — universal first sounds across cultures
+        "ma", "ba", "da", "ga", "pa", "ta", "na", "la",
+        # Reduplicated — the first true "words" babies produce
+        "mama", "baba", "dada", "papa", "nana", "lala",
+    ]
+
+    BABBLE_COOLDOWN_TICKS = 80      # ~4s minimum between babbles
+    BABBLE_BOREDOM_THR    = 0.30
+    BABBLE_RANDOM_RATE    = 0.0008  # ~1/min baseline drive
+    SELF_SPEAK_TICKS      = 35      # ~1.75s self-listening window
+    BIND_LR               = 0.10
+    EXPLORE_RATE          = 0.30    # 30% pure exploration even with priors
+
+    def __init__(self, name: str, save_dir: Path):
+        self.name             = name
+        self.last_babble_tick = -10_000
+        self.self_speak_until = -1
+        self.last_phoneme:    Optional[str] = None
+        self.last_motor_sig:  Optional[str] = None
+        self.last_motor_vec:  Optional[np.ndarray] = None
+        self.motor_to_phoneme: dict[str, dict[str, float]] = {}
+        self.babble_count = 0
+        self.bound_count  = 0
+        self._explore_boost = 0.0   # raised by forward-model surprise (set in maybe_babble)
+        self._save_path = save_dir / f"babble_{name}.json"
+        # Region scores written to semantic dict on successful binding.
+        # Nova uses cortical region names; Simona uses her _s-suffixed names.
+        if name == "nova":
+            self._sem_regions = {
+                "thalamus": 0.50, "temporal": 0.65, "broca": 0.70,
+                "insula":   0.55, "pfc":      0.30, "acc":   0.30,
+                "hippocampus": 0.40,
+            }
+        else:
+            self._sem_regions = {
+                "thalamus_s": 0.50, "temporal_s": 0.65, "broca_s": 0.70,
+                "insula_s":   0.55, "pfc_s":      0.30,
+                "hippocampus_s": 0.40,
+            }
+        self._load()
+
+    def _signature(self, motor_vec: np.ndarray) -> str:
+        """Coarse-bucket the motor spike vector to a stable string key."""
+        s   = float(np.abs(motor_vec).sum())
+        dom = int(np.argmax(np.abs(motor_vec)) % 16)
+        return f"s{int(s * 3)}_d{dom}"
+
+    def maybe_babble(self, current_tick: int, boredom: float,
+                     motor_spk: "torch.Tensor", intrinsic_fired: bool,
+                     tts_busy: bool, tts: "BrainTTS") -> Optional[str]:
+        import random
+        if current_tick < self.self_speak_until:
+            return None
+        if tts_busy:
+            return None
+        if current_tick - self.last_babble_tick < self.BABBLE_COOLDOWN_TICKS:
+            return None
+        # Two emergent drives to practise, both unscripted:
+        #   - vocal self-esteem: a voice it dislikes babbles more (self_model)
+        #   - prediction error : a voice it can't predict babbles more AND
+        #                        explores new motor patterns (forward_model)
+        practice = 0.0
+        sm = getattr(tts, "self_model", None)
+        if sm is not None:
+            practice = max(practice, 0.55 - sm.feel())      # unhappy → practise
+        fm = getattr(tts, "forward_model", None)
+        if fm is not None:
+            practice = max(practice, float(fm.surprise))    # surprised → practise
+            # "That didn't sound how I expected" → try something different.
+            self._explore_boost = float(np.clip(fm.surprise, 0.0, 1.0))
+        else:
+            self._explore_boost = 0.0
+        practice = max(0.0, min(1.0, practice))
+        eff_boredom_thr = self.BABBLE_BOREDOM_THR * (1.0 - 0.6 * practice)
+        eff_random_rate = self.BABBLE_RANDOM_RATE * (1.0 + 4.0 * practice)
+        if not (boredom > eff_boredom_thr
+                or intrinsic_fired
+                or random.random() < eff_random_rate):
+            return None
+
+        motor_vec = motor_spk.detach().numpy().flatten()
+        if np.abs(motor_vec).sum() < 0.01:
+            return None
+        sig     = self._signature(motor_vec)
+        # Phoneme label is just a discrete clustering key for the semantic
+        # dictionary — the SOUND comes from the motor vector through the
+        # articulator + formant synth, not from the label.
+        phoneme = self._sample_phoneme(sig)
+
+        try:
+            tts.speak_motor(motor_spk)
+        except Exception:
+            pass
+
+        # Cache the motor vector that drove this articulation so
+        # auditory_feedback can reinforce the articulator weights with it.
+        self.last_motor_vec   = motor_vec
+        self.last_babble_tick = current_tick
+        self.last_phoneme     = phoneme
+        self.last_motor_sig   = sig
+        self.self_speak_until = current_tick + self.SELF_SPEAK_TICKS
+        self.babble_count    += 1
+        return phoneme
+
+    def _sample_phoneme(self, motor_sig: str) -> str:
+        import random
+        dist = self.motor_to_phoneme.get(motor_sig, {})
+        # Exploration rises with recent prediction error: a brain that can't yet
+        # predict its own voice tries new patterns rather than repeating known
+        # ones (error-driven adjustment, not a fixed schedule).
+        explore = min(0.85, self.EXPLORE_RATE + 0.5 * getattr(self, "_explore_boost", 0.0))
+        if not dist or random.random() < explore:
+            return random.choice(self.PHONEMES)
+        keys    = list(dist.keys())
+        weights = [max(0.001, dist[k]) for k in keys]
+        total   = sum(weights)
+        r = random.uniform(0, total)
+        cum = 0.0
+        for k, w in zip(keys, weights):
+            cum += w
+            if r <= cum:
+                return k
+        return keys[-1]
+
+    def auditory_feedback(self, current_tick: int, mic_volume: float,
+                          sem: "SharedSemanticDictionary",
+                          tts: Optional["BrainTTS"] = None) -> bool:
+        """
+        Each tick: if we're inside our self-speak window AND mic has
+        signal (= our own voice echoing back through the speaker→mic loop),
+        Hebbian-bind the motor signature → phoneme label AND write the
+        phoneme into the semantic dictionary as a known sound. If a TTS
+        is supplied, ALSO reinforce its MotorArticulator weights — that's
+        what makes the brain's vocal control improve with use: the motor
+        pattern that just produced audible sound gets consolidated as a
+        producer of that articulator target.
+        """
+        if current_tick > self.self_speak_until:
+            return False
+        if self.last_motor_sig is None or self.last_phoneme is None:
+            return False
+
+        # Effective self-heard level. Prefer the real acoustic echo (open
+        # speakers → mic). If the mic can't hear us — earbuds, headphones, or
+        # a quiet room — fall back to the EFFERENCE COPY: the forward model's
+        # prediction of our own voice. A motor command WAS issued, so corollary
+        # discharge lets the brain learn from the predicted acoustic consequence
+        # without needing the speaker→mic round-trip (DIVA-style internal model).
+        # The forward model trains on the produced digital waveform, so it stays
+        # valid no matter where the audio is routed.
+        heard = float(mic_volume)
+        if heard < 0.012:
+            fm = getattr(tts, "forward_model", None) if tts is not None else None
+            if fm is not None and self.last_motor_vec is not None:
+                try:
+                    heard = float(fm.predict(self.last_motor_vec)[0]) * 0.12
+                except Exception:
+                    heard = 0.0
+            if heard < 0.012:
+                return False
+
+        sig = self.last_motor_sig
+        if sig not in self.motor_to_phoneme:
+            self.motor_to_phoneme[sig] = {}
+        for k in self.motor_to_phoneme[sig]:
+            self.motor_to_phoneme[sig][k] *= 0.998   # slow decay of rivals
+        cur = self.motor_to_phoneme[sig].get(self.last_phoneme, 0.0)
+        self.motor_to_phoneme[sig][self.last_phoneme] = cur + self.BIND_LR
+
+        sem.nova_write(
+            word=self.last_phoneme,
+            region_scores=self._sem_regions,
+            spike_count=2.0,
+            tick=current_tick,
+            trust=0.6,
+        )
+
+        if tts is not None and tts.articulator is not None and self.last_motor_vec is not None:
+            try:
+                # Reward scaled by heard level — real echo if on speakers,
+                # predicted loudness (efference copy) if on earbuds.
+                reward = float(min(1.0, heard * 8.0))
+                # ...and by how good that sound felt: the brain consolidates its
+                # vocal motor map HARDER when it likes how it sounded, and keeps
+                # exploring (weaker consolidation) when it doesn't.
+                sm = getattr(tts, "self_model", None)
+                if sm is not None:
+                    reward *= (0.5 + 0.5 * sm.feel())   # 0.5x .. 1.0x by self-judged quality
+                tts.articulator.reinforce(self.last_motor_vec, reward=reward)
+                if self.bound_count % 8 == 0:
+                    tts.articulator._save()
+            except Exception:
+                pass
+
+        self.bound_count += 1
+        if self.bound_count % 5 == 0:
+            self._save()
+        return True
+
+    def _save(self):
+        try:
+            with open(self._save_path, "w") as f:
+                json.dump({
+                    "motor_to_phoneme": self.motor_to_phoneme,
+                    "babble_count":     self.babble_count,
+                    "bound_count":      self.bound_count,
+                }, f)
+        except Exception:
+            pass
+
+    def _load(self):
+        if not self._save_path.exists():
+            return
+        try:
+            with open(self._save_path) as f:
+                d = json.load(f)
+            self.motor_to_phoneme = d.get("motor_to_phoneme", {})
+            self.babble_count     = d.get("babble_count", 0)
+            self.bound_count      = d.get("bound_count", 0)
+            _log(f"BabblingCortex({self.name}): loaded "
+                 f"{len(self.motor_to_phoneme)} signatures, "
+                 f"{self.bound_count} bindings, {self.babble_count} babbles")
+        except Exception:
+            pass
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PERSONA IMPRINTER — emergent visual recognition of named characters
+# ══════════════════════════════════════════════════════════════════════════════
+
+class PersonaImprinter:
+    """
+    Drop image files into personas/ — the brain learns the persona naturally.
+
+    NOT a classifier. NOT hardcoded names. The filename IS the persona word
+    and the binding emerges from repeated Hebbian writes into the shared
+    semantic dictionary, the same mechanism that learns any other concept.
+
+    Pipeline:
+      1. Scan personas/ for *.png|*.jpg|*.jpeg|*.bmp|*.webp
+      2. Filename → persona word (drop extension, strip trailing _N / -N)
+      3. Run image through the same mediapipe FaceMesh + _FACE_BASIS
+         projection used by the live camera → 32-float face signature
+      4. Average multiple images of the same persona into one template
+      5. At init, repeatedly bind each persona word into the semantic
+         dictionary with strong identity-region activation (temporal,
+         hippocampus, insula, broca)
+      6. At runtime, recognise live faces against templates each tick;
+         every match refreshes the binding via another Hebbian write —
+         so the brain keeps learning every time it sees them
+
+    No labels are exposed to higher layers. Recognition appears as a
+    soft semantic prime — the brain "remembers a name" because that
+    word's spike-space fingerprint is what it always was, just more
+    strongly written.
+    """
+
+    SCAN_DIR        = "personas"
+    EXPOSURE_TICKS  = 80     # initial bind strength per persona
+    RECOGNIZE_THR   = 0.55   # cosine sim above which we refresh the binding
+    REFRESH_EVERY   = 10     # ticks between in-flight Hebbian refreshes
+
+    def __init__(self):
+        self.templates: dict[str, np.ndarray] = {}
+        self._last_refresh_tick: dict[str, int] = {}
+        self._scan_images()
+
+    @staticmethod
+    def _persona_name_from_path(p: Path) -> str:
+        import re
+        stem = p.stem.lower().strip()
+        m = re.match(r"^(.+?)[_-]\d+$", stem)
+        return m.group(1) if m else stem
+
+    def _scan_images(self):
+        d = Path(self.SCAN_DIR)
+        if not d.exists():
+            try:
+                d.mkdir(parents=True, exist_ok=True)
+            except Exception:
+                pass
+            return
+
+        try:
+            import cv2
+            import mediapipe as mp
+        except ImportError:
+            _log("PersonaImprinter: cv2/mediapipe unavailable — folder skipped")
+            return
+
+        # Reconstruct face basis inline — same seed/shape as vision.py
+        # so signatures are identical whether or not vision.py loads.
+        try:
+            from vision import _FACE_BASIS
+        except Exception:
+            _rng = np.random.default_rng(42)
+            _basis = _rng.standard_normal((FACE_VEC_DIM, 468 * 3)).astype(np.float32)
+            _basis, _ = np.linalg.qr(_basis.T)
+            _FACE_BASIS = _basis.T.astype(np.float32)
+            _log("PersonaImprinter: reconstructed face basis (vision.py not on path)")
+
+        try:
+            mp_face = mp.solutions.face_mesh.FaceMesh(
+                static_image_mode=True,
+                max_num_faces=1,
+                refine_landmarks=False,         # 468 landmarks — matches _FACE_BASIS
+                min_detection_confidence=0.1,   # lenient — stylised art faces
+            )
+        except Exception as e:
+            _log(f"PersonaImprinter: mediapipe init failed: {e}")
+            mp_face = None
+
+        exts = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
+        groups: dict[str, list[np.ndarray]] = {}
+
+        for img_path in sorted(d.iterdir()):
+            if img_path.suffix.lower() not in exts:
+                continue
+            name = self._persona_name_from_path(img_path)
+            try:
+                img = cv2.imread(str(img_path))
+                if img is None:
+                    _log(f"PersonaImprinter: cannot read {img_path.name}")
+                    # Still register the name so it gets imprinted
+                    groups.setdefault(name, [])
+                    continue
+                vec: Optional[np.ndarray] = None
+                if mp_face is not None:
+                    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    results = mp_face.process(rgb)
+                    if results.multi_face_landmarks:
+                        lm  = results.multi_face_landmarks[0]
+                        pts = np.array(
+                            [(p.x, p.y, p.z) for p in lm.landmark],
+                            dtype=np.float32,
+                        )
+                        mn, mx = pts.min(axis=0), pts.max(axis=0)
+                        rng = (mx - mn) + 1e-8
+                        pts = (pts - mn) / rng * 2.0 - 1.0
+                        v = _FACE_BASIS @ pts.flatten()
+                        vec = (v / (np.linalg.norm(v) + 1e-8)).astype(np.float32)
+                        _log(f"PersonaImprinter: face-mesh encoded {img_path.name} → '{name}'")
+                if vec is None:
+                    # Fallback: deterministic image fingerprint
+                    # Grayscale 8x8 grid (64) + color histogram (24) projected
+                    # into FACE_VEC_DIM. Not a face vector — won't match live
+                    # camera — but binds a stable visual signature to the
+                    # persona name in semantic memory.
+                    vec = self._image_fingerprint(img)
+                    _log(f"PersonaImprinter: no face in {img_path.name} — using image fingerprint for '{name}'")
+                groups.setdefault(name, []).append(vec)
+            except Exception as e:
+                _log(f"PersonaImprinter: failed on {img_path.name}: {e}")
+                # Still register the name
+                groups.setdefault(name, [])
+
+        try:
+            if mp_face is not None:
+                mp_face.close()
+        except Exception:
+            pass
+
+        # Names that had any image at all (even if face detection failed)
+        # are still bound by name. Templates only set for those with a vec.
+        self.known_names: list[str] = sorted(groups.keys())
+        for name, vecs in groups.items():
+            if not vecs:
+                continue
+            t = np.mean(vecs, axis=0)
+            t = t / (np.linalg.norm(t) + 1e-8)
+            self.templates[name] = t.astype(np.float32)
+
+        if self.known_names:
+            _log(f"PersonaImprinter: {len(self.known_names)} personas known: {self.known_names}; "
+                 f"{len(self.templates)} with visual templates")
+        else:
+            _log("PersonaImprinter: no persona images found")
+
+    @staticmethod
+    def _image_fingerprint(img_bgr: np.ndarray) -> np.ndarray:
+        """
+        Deterministic FACE_VEC_DIM signature from raw image — used when
+        mediapipe cannot detect a face (stylised renders, art, etc).
+
+        Combines: 8x8 downsampled grayscale (64), HSV color histogram (24).
+        Projected into FACE_VEC_DIM via the same kind of QR-orthonormal
+        basis used by vision._FACE_BASIS, but seeded differently so we
+        don't collide with real face vectors.
+        """
+        import cv2
+        gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+        small = cv2.resize(gray, (8, 8), interpolation=cv2.INTER_AREA)
+        small = (small.astype(np.float32) / 255.0 - 0.5).flatten()  # [64]
+
+        hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+        h_hist = cv2.calcHist([hsv], [0], None, [12], [0, 180]).flatten()
+        s_hist = cv2.calcHist([hsv], [1], None, [6],  [0, 256]).flatten()
+        v_hist = cv2.calcHist([hsv], [2], None, [6],  [0, 256]).flatten()
+        hist   = np.concatenate([h_hist, s_hist, v_hist]).astype(np.float32)
+        hist   = hist / (hist.sum() + 1e-8) - (1.0 / hist.size)         # [24]
+
+        raw = np.concatenate([small, hist]).astype(np.float32)          # [88]
+
+        rng = np.random.default_rng(1337)  # different seed from face basis
+        basis = rng.standard_normal((FACE_VEC_DIM, raw.size)).astype(np.float32)
+        basis, _ = np.linalg.qr(basis.T)
+        basis = basis.T.astype(np.float32)
+
+        v = basis @ raw
+        return (v / (np.linalg.norm(v) + 1e-8)).astype(np.float32)
+
+    def recognize(self, face_vec: Optional[np.ndarray]) -> tuple[Optional[str], float]:
+        if not self.templates or face_vec is None:
+            return None, 0.0
+        n = np.linalg.norm(face_vec) + 1e-8
+        v = face_vec / n
+        best_name, best_sim = None, 0.0
+        for name, t in self.templates.items():
+            sim = float(np.clip(np.dot(t, v), 0.0, 1.0))
+            if sim > best_sim:
+                best_sim, best_name = sim, name
+        return best_name, best_sim
+
+    # Region pattern used for identity bindings — same regions that
+    # already encode "self / other / name" in the cortical map.
+    _BIND_REGIONS = {
+        "thalamus": 0.40, "temporal": 0.90, "hippocampus": 0.85,
+        "acc":      0.40, "pfc":      0.50, "broca":      0.60, "insula": 0.50,
+    }
+
+    def initial_exposure(self, sem: "SharedSemanticDictionary", tick: int):
+        """At startup, repeatedly bind each persona word into the dictionary.
+        Names are bound even when the visual template is missing — the file's
+        presence in personas/ is enough to teach the brain the name."""
+        if not self.known_names:
+            return
+        for name in self.known_names:
+            for _ in range(self.EXPOSURE_TICKS):
+                sem.nova_write(
+                    word=name,
+                    region_scores=self._BIND_REGIONS,
+                    spike_count=6.0,
+                    tick=tick,
+                    trust=1.0,
+                )
+            tmpl = "with visual" if name in self.templates else "name-only"
+            _log(f"PersonaImprinter: imprinted '{name}' ({self.EXPOSURE_TICKS} exposures, {tmpl})")
+
+    def refresh_binding(self, sem: "SharedSemanticDictionary",
+                        face_vec: Optional[np.ndarray], tick: int) -> tuple[Optional[str], float]:
+        """
+        Each step() with a live face — if it matches a persona, write the
+        binding again at strength proportional to similarity. Continuous
+        Hebbian learning while the persona is on screen.
+        """
+        name, sim = self.recognize(face_vec)
+        if name is None or sim < self.RECOGNIZE_THR:
+            return name, sim
+        last = self._last_refresh_tick.get(name, -10_000)
+        if tick - last < self.REFRESH_EVERY:
+            return name, sim
+        self._last_refresh_tick[name] = tick
+        # Scale strength by current similarity — stronger match → stronger write
+        scaled = {r: v * sim for r, v in self._BIND_REGIONS.items()}
+        sem.nova_write(
+            word=name,
+            region_scores=scaled,
+            spike_count=3.0 * sim,
+            tick=tick,
+            trust=sim,
+        )
+        return name, sim
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # THOUGHT PIPE — EMERGENT INNER VOICE
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -636,6 +1166,480 @@ class IntrinsicMotivation:
             self.last_fire_tick = current_tick
             return True
         return False
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# AMYGDALA + NEUROMODULATORS  (limbic salience + chemical tone)
+# ══════════════════════════════════════════════════════════════════════════════
+
+class Amygdala:
+    """
+    Salience / threat appraisal hub — NOT a population of named neurons, but a
+    fast limbic modulator, mirroring the real amygdala's job: rapid evaluation
+    of how salient/threatening the moment is, gating arousal that colours the
+    rest of the brain (noradrenergic surge, HPA-axis stress).
+
+    All inputs are signals the brain already produces (emergent, not scripted):
+      d_mic      — magnitude of sudden change in sound (a startle / orienting)
+      unfamiliar — a face is present but identity is low (a potential stranger)
+      emotion    — current insula (affective) activity
+      surprise   — forward-model prediction error (the unexpected)
+
+    Output: arousal in [0,1] (smoothed). Per-personality reactivity — Simona's
+    amygdala is hot (she startles, feels fast); Nova's is cool (measured).
+    """
+    def __init__(self, name: str, reactivity: float = 1.0, decay: float = 0.90):
+        self.name       = name
+        self.reactivity = reactivity
+        self.decay      = decay
+        self.arousal    = 0.0
+        self._last_mic  = 0.0
+
+    def appraise(self, mic: float, identity: float, face_present: bool,
+                 insula_act: float, surprise: float) -> float:
+        d_mic   = abs(float(mic) - self._last_mic)
+        self._last_mic = float(mic)
+        startle    = min(1.0, d_mic * 6.0)               # calmer — was 12 (over-reactive)
+        unfamiliar = (max(0.0, 0.5 - float(identity)) * 2.0) if face_present else 0.0
+        emo        = min(1.0, float(insula_act) * 6.0)   # insula activity is small-valued
+        salience   = (0.40 * startle + 0.30 * min(1.0, unfamiliar)
+                      + 0.18 * emo + 0.12 * float(surprise)) * self.reactivity
+        self.arousal = self.decay * self.arousal + (1.0 - self.decay) * min(1.0, salience)
+        return self.arousal
+
+
+class Neuromodulators:
+    """
+    Per-personality neuromodulatory tone. NOT neurons — diffuse chemical levels
+    that MODULATE the dynamics the neurons already have. Every output is a small,
+    BOUNDED factor around 1.0, so they tune behaviour and can never blow up the
+    tuned leak cadences or Phill physics.
+
+      dopamine  (da)  — reward / "wanting": scales plasticity + motivation drive,
+                        and (with arousal) excites toward action.
+      serotonin (ser) — patience / mood / behavioural inhibition: raises impulse
+                        thresholds (wait, stay calm). Nova high, Simona low.
+      gaba            — homeostatic inhibition: rises when total activity is high,
+                        damps the network back down (anti-runaway / E-I balance).
+      arousal         — fed from the Amygdala; phasic, boosts da, suppresses ser.
+
+    Tonic levels relax toward each personality's baseline every tick.
+    """
+    def __init__(self, name: str, da0: float, ser0: float, gaba0: float,
+                 ach0: float = 0.50, ne0: float = 0.40, oxy0: float = 0.30,
+                 relax: float = 0.985):
+        self.name  = name
+        self.da0, self.ser0, self.gaba0 = da0, ser0, gaba0
+        self.da, self.ser, self.gaba    = da0, ser0, gaba0
+        # Stage-4 modulators: acetylcholine (attention/encoding),
+        # norepinephrine (alertness/gain), oxytocin (social bonding).
+        self.ach0, self.ne0, self.oxy0  = ach0, ne0, oxy0
+        self.ach, self.ne, self.oxy     = ach0, ne0, oxy0
+        self.arousal = 0.0
+        self.relax   = relax
+
+    def update(self, reward: float, total_activity: float,
+               arousal: float, social: float,
+               attention: float = 0.0, novelty: float = 0.0,
+               urgency: float = 0.0, bonding: float = 0.0) -> None:
+        reward  = max(0.0, float(reward))
+        arousal = max(0.0, min(1.0, float(arousal)))
+        social  = max(0.0, min(1.0, float(social)))
+        act     = max(0.0, float(total_activity))
+        attention = max(0.0, min(1.0, float(attention)))
+        novelty   = max(0.0, min(1.0, float(novelty)))
+        urgency   = max(0.0, min(1.0, float(urgency)))
+        bonding   = max(0.0, min(1.0, float(bonding)))
+
+        # Dopamine: PHASIC reward only — relaxes firmly to baseline. Arousal no
+        # longer pins it (that conflated arousal with reward and caused runaway).
+        self.da = self.da0 + (self.da - self.da0) * 0.96
+        self.da += 0.25 * reward
+        self.da = float(min(1.3, max(0.0, self.da)))
+
+        # Serotonin: stays ANCHORED near each personality's baseline (firm
+        # relax) — social calm nudges it up, arousal/stress nudges it down, but
+        # it can't drift far (Simona stays low/restless, Nova stays high/patient).
+        self.ser = self.ser0 + (self.ser - self.ser0) * 0.94
+        self.ser += 0.010 * social - 0.020 * arousal
+        self.ser = float(min(1.2, max(0.05, self.ser)))
+
+        # GABA: the homeostatic BRAKE. Rises proportionally with REAL activity
+        # (no high deadband — region activity values are small) and arousal, so
+        # it actually engages when she's overactive and damps her back down.
+        target = self.gaba0 + 1.1 * act + 0.5 * arousal
+        self.gaba += 0.15 * (target - self.gaba)
+        self.gaba = float(min(1.5, max(0.0, self.gaba)))
+
+        # Acetylcholine: attention + novelty → focus/encoding mode. Relaxes down
+        # (and falls when unattended, e.g. during sleep) enabling consolidation.
+        self.ach = self.ach0 + (self.ach - self.ach0) * 0.95
+        self.ach += 0.06 * attention + 0.04 * novelty
+        self.ach = float(min(1.3, max(0.0, self.ach)))
+
+        # Norepinephrine: alertness/gain from arousal + urgency (locus-coeruleus
+        # style). High NE = vigilant, wakeful; relaxes toward baseline.
+        self.ne = self.ne0 + (self.ne - self.ne0) * 0.95
+        self.ne += 0.06 * arousal + 0.06 * urgency
+        self.ne = float(min(1.3, max(0.0, self.ne)))
+
+        # Oxytocin: social bonding. Builds slowly with contact and fades slowly
+        # — attachment persists. The chemical substrate of their bond with the
+        # architect and each other.
+        self.oxy = self.oxy0 + (self.oxy - self.oxy0) * 0.995
+        self.oxy += 0.025 * bonding
+        self.oxy = float(min(1.3, max(0.0, self.oxy)))
+
+        self.arousal = arousal
+
+    # ── Bounded modulation factors ──────────────────────────────────────────
+    def learning_gain(self) -> float:
+        """Dopamine + acetylcholine gate plasticity: learn harder when rewarded
+        AND attending (ACh = encoding mode)."""
+        return float(min(1.8, max(0.5, 0.6 + 0.7 * self.da + 0.4 * (self.ach - self.ach0))))
+
+    def encoding_gain(self) -> float:
+        """Acetylcholine — attention/encoding strength (memory written deeper)."""
+        return float(min(1.6, max(0.5, 0.7 + 0.6 * self.ach)))
+
+    def alertness(self) -> float:
+        """Norepinephrine — wakeful vigilance / response gain (0.3..1.6)."""
+        return float(min(1.6, max(0.3, 0.4 + 0.8 * self.ne)))
+
+    def trust_bonus(self) -> float:
+        """Oxytocin — bonding lifts felt safety/trust (0..0.4)."""
+        return float(min(0.4, max(0.0, 0.5 * (self.oxy - self.oxy0))))
+
+    def threat_damping(self) -> float:
+        """Oxytocin — bonding calms the amygdala (less startle when secure)."""
+        return float(min(0.55, max(0.0, 0.45 * self.oxy)))
+
+    def motivation_gain(self) -> float:
+        """Dopamine drives 'wanting' — curiosity neurons charge faster."""
+        return float(min(1.8, max(0.6, 0.7 + 0.9 * self.da)))
+
+    def threshold_offset(self) -> float:
+        """
+        Additive threshold delta for cortical regions. GABA is the dominant
+        term — when she's overactive it RAISES thresholds and brakes her.
+        Serotonin adds patience; dopamine gives a little drive. Arousal NO
+        LONGER lowers thresholds directly (that was the runaway — arousal now
+        feeds GABA instead). Asymmetric clamp: lots of room to CALM (raise),
+        little room to excite (lower), so it can never collapse a threshold.
+        """
+        off = (0.34 * (self.gaba - self.gaba0)
+               + 0.14 * (self.ser - self.ser0)
+               - 0.10 * (self.da - self.da0))
+        return float(min(0.40, max(-0.10, off)))
+
+    def impulsivity(self) -> float:
+        """
+        Low ABSOLUTE serotonin → impulsive (0..1). Absolute (not relative to
+        baseline) so Simona's low-serotonin temperament makes her inherently
+        more impulsive than Nova. Shortens leak/proactive cadence.
+        """
+        return float(min(1.0, max(0.0, 1.0 - self.ser)))
+
+    def snapshot(self) -> dict:
+        return {"da": round(self.da, 3), "ser": round(self.ser, 3),
+                "gaba": round(self.gaba, 3), "arousal": round(self.arousal, 3),
+                "ach": round(self.ach, 3), "ne": round(self.ne, 3),
+                "oxy": round(self.oxy, 3)}
+
+
+class BasalGanglia:
+    """
+    Action selection — the cortico-striatal go/no-go gate (Stage 1 of the
+    integrated loop). Several drives compete each cycle (speak / search /
+    babble / rest); the striatum weighs each by salience × a LEARNED go-weight
+    × a dopamine 'go' bias. GPi/SNr holds everything inhibited by default, and
+    the strongest candidate is released ONLY if it clears the selection
+    threshold — otherwise REST (deliberate inaction). This is the circuit
+    dopamine actually gates: more dopamine → lower bar to act (approach);
+    GABA + serotonin → higher bar (inhibition, patience). The winning action's
+    go-weight is reinforced by reward (dopamine-gated plasticity), so useful
+    actions become easier to select over time. Emergent: it selects among
+    drives the brain already produces, it does not script behaviour.
+    """
+    def __init__(self, name: str, actions: list, base_threshold: float = 0.30,
+                 lr: float = 0.02):
+        self.name           = name
+        self.go_w           = {a: 1.0 for a in actions}   # neutral start
+        self.base_threshold = base_threshold
+        self.lr             = lr
+        self.last_action: Optional[str] = None
+        self.selections     = 0
+
+    def select(self, salience: dict, dopamine: float, da0: float,
+               gaba: float, gaba0: float, serotonin: float) -> Optional[str]:
+        # Dopamine facilitates 'go' (D1 direct pathway); GABA opposes it
+        # (inhibition). So the go-bias rises with dopamine, falls with GABA.
+        go_bias = float(min(1.6, max(0.30,
+            1.0 + 0.8 * (dopamine - da0) - 0.6 * max(0.0, gaba - gaba0))))
+        # GABA (inhibition) is the dynamic brake that raises the bar to act.
+        # Serotonin/patience is intentionally NOT added here — each personality's
+        # patience already lives in its base_threshold (Nova high, Simona low),
+        # and in the proactive cadence; adding it again double-penalised Nova
+        # into never acting. (serotonin kept in the signature for callers.)
+        thr = self.base_threshold + 0.40 * max(0.0, gaba - gaba0)
+        best, best_score = None, 0.0
+        for a, s in salience.items():
+            sc = max(0.0, float(s)) * self.go_w.get(a, 0.5) * go_bias
+            if sc > best_score:
+                best, best_score = a, sc
+        if best is not None and best_score >= thr:
+            self.last_action = best
+            self.selections += 1
+            return best
+        self.last_action = None
+        return None
+
+    def reinforce(self, action: str, reward: float, dopamine: float) -> None:
+        """Dopamine-gated plasticity: a rewarded action gets easier to select."""
+        if action in self.go_w and reward != 0.0:
+            self.go_w[action] = float(min(2.0, max(0.05,
+                self.go_w[action] + self.lr * reward * max(0.1, dopamine))))
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# HIPPOCAMPUS (EPISODIC MEMORY) + SLEEP / CONSOLIDATION  (Stage 3 of the loop)
+# ══════════════════════════════════════════════════════════════════════════════
+
+class EpisodicMemory:
+    """
+    Fast hippocampal episodic store (per personality). While AWAKE, salient
+    moments are encoded as episodes (the concept that was active, its salience,
+    the region context, the tick). It's capacity-limited and recency/salience
+    weighted — like the hippocampus, it holds the recent past vividly but not
+    forever. During SLEEP these episodes are REPLAYED and CONSOLIDATED into the
+    shared semantic dictionary (episodic → semantic / systems consolidation):
+    what recurred or carried weight is strengthened into long-term knowledge;
+    the rest decays and is forgotten. Nothing is scripted — episodes are just
+    what actually happened.
+    """
+    def __init__(self, name: str, capacity: int = 80):
+        self.name     = name
+        self.episodes: "deque[dict]" = deque(maxlen=capacity)
+        self.encoded  = 0
+        self.consolidated = 0
+
+    def encode(self, concept: str, salience: float, regions: dict, tick: int) -> None:
+        c = (concept or "").strip()
+        if not c:
+            return
+        self.episodes.append({
+            "concept": c,
+            "salience": float(max(0.05, min(1.0, salience))),
+            "regions": dict(regions) if regions else {},
+            "tick": int(tick),
+        })
+        self.encoded += 1
+
+    def replay(self, rng) -> Optional[dict]:
+        """Sample one episode for replay, weighted by salience (ripple)."""
+        if not self.episodes:
+            return None
+        eps = list(self.episodes)
+        weights = [e["salience"] for e in eps]
+        tot = sum(weights)
+        if tot <= 0:
+            return rng.choice(eps)
+        r = rng.uniform(0, tot)
+        cum = 0.0
+        for e, w in zip(eps, weights):
+            cum += w
+            if r <= cum:
+                return e
+        return eps[-1]
+
+    def decay(self, factor: float = 0.985) -> None:
+        """Unconsolidated episodes fade (forgetting)."""
+        for e in self.episodes:
+            e["salience"] *= factor
+
+    def __len__(self) -> int:
+        return len(self.episodes)
+
+
+class SleepCycle:
+    """
+    Homeostatic sleep (one shared 'body' clock — Nova and Simona sleep together).
+
+    A 'sleep pressure' (adenosine-like) builds while awake and discharges during
+    sleep. The brain falls asleep when pressure is high AND it is calm and
+    UNSTIMULATED (quiet mic, no architect, low arousal); it WAKES the instant real
+    stimulation arrives, or once rested. Asleep, outward action is suppressed and
+    the hippocampus replays/consolidates — and sometimes dreams.
+
+    Timings are tunable. Defaults: ~4 min of calm silence → sleepy; a nap of
+    ~40-60 s discharges it. Any input wakes them immediately.
+    """
+    def __init__(self, build: float = 0.00015, discharge: float = 0.0010,
+                 enter_at: float = 0.80, wake_below: float = 0.05):
+        self.pressure   = 0.0
+        self.asleep     = False
+        self.build      = build
+        self.discharge  = discharge
+        self.enter_at   = enter_at
+        self.wake_below = wake_below
+        self.slept_ticks = 0
+
+    def update(self, stimulation: float, arousal: float) -> bool:
+        stim = float(max(0.0, stimulation))
+        if self.asleep:
+            self.pressure = max(0.0, self.pressure - self.discharge)
+            self.slept_ticks += 1
+            # Wake on real stimulation, or once rested.
+            if stim > 0.15 or self.pressure <= self.wake_below:
+                self.asleep = False
+        else:
+            self.pressure = min(1.0, self.pressure + self.build)
+            # Fall asleep only when very sleepy AND calm AND unstimulated.
+            if (self.pressure >= self.enter_at and stim < 0.06
+                    and float(arousal) < 0.25):
+                self.asleep = True
+                self.slept_ticks = 0
+        return self.asleep
+
+    def wake(self) -> None:
+        """External event (user input) forces wakefulness."""
+        if self.asleep:
+            self.asleep = False
+        self.pressure = max(0.0, self.pressure - 0.10)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SEARCH CORTEX — emergent web access
+# ══════════════════════════════════════════════════════════════════════════════
+
+class SearchCortex:
+    """
+    Pressure-driven web access. Mirrors ThoughtPipe: a leaky accumulator
+    integrates three signals each tick, and when threshold is crossed the
+    cortex picks the currently-most-active semantic token as the query and
+    fires it asynchronously through GoogleSearchBackend.
+
+    The brain does NOT decide 'I want to search X'. Its semantic state
+    already has X as the most active token, and the search just reads
+    that off and asks the world about it.
+
+    Three pressure inputs (additive):
+      1. unsatisfied curiosity — curiosity_decay sustained while V_phill stays low
+      2. unknown-word signal   — last user input contained a word with no/weak
+                                  binding in the semantic dictionary
+      3. articulator confidence gap — the brain wants to vocalize a known
+                                  concept but the motor articulator's reward
+                                  history for that concept is weak
+
+    Nova: threshold 1.4 (deliberate; needs sustained pressure).
+    Simona: threshold 0.55 (impulsive; one spike of any input may fire).
+    """
+
+    NOVA_THRESHOLD   = 1.4
+    SIMONA_THRESHOLD = 0.55
+    DECAY            = 0.94
+    COOLDOWN_TICKS   = 200   # 10s minimum between searches per personality
+    MIN_QUERY_LEN    = 2
+
+    def __init__(self, persona_name: str):
+        self.persona_name = persona_name
+        thr = self.NOVA_THRESHOLD if persona_name == "nova" else self.SIMONA_THRESHOLD
+        self._pressure = LeakyAccumulator(threshold=thr, decay=self.DECAY)
+        self.last_search_tick = -10_000
+        self.searches_fired   = 0
+        # Last unknown-word and pronunciation-target seen, in priority order
+        self._unknown_word_q: deque[str] = deque(maxlen=4)
+        self._pronunciation_q: deque[str] = deque(maxlen=4)
+        # Pending result snippets from the worker (drained each tick)
+        self._results: deque[tuple[str, str, str]] = deque(maxlen=8)  # (query, snippet, source)
+        self._results_lock = threading.Lock()
+
+    def note_unknown_word(self, word: str) -> None:
+        w = (word or "").strip().lower()
+        if len(w) >= self.MIN_QUERY_LEN and w not in self._unknown_word_q:
+            self._unknown_word_q.append(w)
+
+    def note_pronunciation_target(self, word: str) -> None:
+        w = (word or "").strip().lower()
+        if len(w) >= self.MIN_QUERY_LEN and w not in self._pronunciation_q:
+            self._pronunciation_q.append(w)
+
+    def _push_result(self, query: str, snippet: str, source: str) -> None:
+        with self._results_lock:
+            self._results.append((query, snippet, source))
+
+    def drain_results(self) -> list[tuple[str, str, str]]:
+        with self._results_lock:
+            out = list(self._results)
+            self._results.clear()
+            return out
+
+    def tick(self, current_tick: int,
+             curiosity_decay: float, V_phill: float,
+             articulator_confidence_gap: float) -> tuple[bool, Optional[str], str]:
+        """
+        Integrate pressure and return (fired, query, mode) where:
+          fired = True if threshold crossed AND cooldown passed
+          query = the chosen query string (may be None if no candidate)
+          mode  = "curiosity" | "unknown" | "pronounce"  — drives query phrasing
+
+        Inputs explained:
+          curiosity_decay (0..1)            — own personality's curiosity envelope
+          V_phill (-1..1 typical)           — shared affective field current value
+          articulator_confidence_gap (0..1) — high when brain wants to vocalize
+                                              a concept but its motor map is weak
+        """
+        # 1) Unsatisfied curiosity: high curiosity_decay while V_phill stays low
+        unsat = max(0.0, curiosity_decay * (1.0 - abs(V_phill)))
+
+        # 2) Unknown-word presence: scale by queue depth (more unknowns = more pressure)
+        unknown = 0.6 * min(1.0, len(self._unknown_word_q) / 3.0)
+
+        # 3) Articulator confidence gap (already 0..1)
+        pron = max(0.0, min(1.0, articulator_confidence_gap))
+
+        # Per-personality input weighting. Curiosity (unsat) is now the
+        # DOMINANT, self-sufficient driver — weighted high enough that a
+        # sustained emergent-curiosity drive can cross threshold ON ITS OWN,
+        # with no user input. (Previously curiosity was weighted so low it
+        # could never fire a search alone — searches were effectively only
+        # reactive to typed unknown words. That is the behaviour being fixed.)
+        # Nova stays deliberate (fires only when very curious & sustained);
+        # Simona is restless (fires on mild curiosity). unknown/pron remain
+        # as additive boosters so typed input still accelerates a search.
+        if self.persona_name == "nova":
+            inp = 0.160 * unsat + 0.050 * unknown + 0.030 * pron
+        else:
+            inp = 0.200 * unsat + 0.075 * unknown + 0.045 * pron
+
+        fired = self._pressure.integrate(inp)
+        if not fired:
+            return False, None, ""
+
+        # Cooldown — avoid hammering the network
+        if current_tick - self.last_search_tick < self.COOLDOWN_TICKS:
+            return False, None, ""
+
+        # Pick a query and mode in priority order
+        query: Optional[str] = None
+        mode = "curiosity"
+        if self._pronunciation_q:
+            w = self._pronunciation_q.popleft()
+            query = f"how to pronounce {w}"
+            mode = "pronounce"
+        elif self._unknown_word_q:
+            w = self._unknown_word_q.popleft()
+            query = f"what does {w} mean"
+            mode = "unknown"
+        # else: query stays None — pressure was real but no semantic target.
+        # The caller may inject one from current peak activation.
+
+        if query:
+            self.last_search_tick = current_tick
+            self.searches_fired  += 1
+            return True, query, mode
+
+        return True, None, "curiosity"
 
 
 class ThoughtPipe:
@@ -777,6 +1781,126 @@ class VoiceIdentityLearner:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# WORKING MEMORY — per-personality, Cowan-style ~4-slot capacity
+# ══════════════════════════════════════════════════════════════════════════════
+class WorkingMemory:
+    """
+    Each personality holds a tiny set of recent salient concepts. Modeled
+    after Cowan's ~4-slot capacity estimate (rather than Miller's 7±2 — the
+    smaller number is more defensible and forces sharper eviction dynamics).
+    Each slot carries the concept word, a snapshot of region activity at
+    encoding time, the tick it was encoded, and a salience score that
+    decays toward zero each personality tick. Items with salience < 0.05
+    are evicted; new items displace the lowest-salience slot when full.
+
+    Why this matters: WM is what makes "what was I just thinking about"
+    a physically-present signal. It's the substrate for emergent priming
+    (replaces the +0.55 PFC trainer-hack in think()), and it's the source
+    of context for the StreamOfConsciousness when composing phrases.
+    """
+
+    def __init__(self, name: str, capacity: int = 4, decay: float = 0.985,
+                 save_dir: Optional[Path] = None):
+        self.name        = name
+        self.capacity    = int(capacity)
+        self.decay       = float(decay)
+        self.slots: list[dict] = []  # each: {concept, regions, t_encoded, salience}
+        self._save_path  = (save_dir or Path(".")) / f"working_memory_{name}.json"
+        self._writes     = 0
+        self._load()
+
+    def add(self, concept: str, regions: Optional[dict] = None,
+            salience: float = 1.0, t_encoded: int = 0) -> None:
+        if not concept:
+            return
+        # If this concept is already in WM, just refresh its salience and time.
+        for slot in self.slots:
+            if slot["concept"] == concept:
+                slot["salience"]  = min(1.0, slot["salience"] + 0.4 * salience)
+                slot["t_encoded"] = int(t_encoded)
+                if regions: slot["regions"] = dict(regions)
+                return
+        new_slot = {
+            "concept":   str(concept),
+            "regions":   dict(regions or {}),
+            "t_encoded": int(t_encoded),
+            "salience":  float(min(1.0, salience)),
+        }
+        if len(self.slots) < self.capacity:
+            self.slots.append(new_slot)
+            return
+        # Displace lowest-salience slot.
+        idx_min = min(range(len(self.slots)), key=lambda i: self.slots[i]["salience"])
+        if self.slots[idx_min]["salience"] < new_slot["salience"]:
+            self.slots[idx_min] = new_slot
+
+    def decay_tick(self) -> None:
+        if not self.slots:
+            return
+        kept = []
+        for s in self.slots:
+            s["salience"] *= self.decay
+            if s["salience"] >= 0.05:
+                kept.append(s)
+        self.slots = kept
+
+    def top_k(self, k: int = 2) -> list[str]:
+        if not self.slots:
+            return []
+        ordered = sorted(self.slots, key=lambda s: -s["salience"])
+        return [s["concept"] for s in ordered[:k]]
+
+    def dominant_regions(self) -> dict[str, float]:
+        """Salience-weighted average of region activity across all slots."""
+        agg: dict[str, float] = {}
+        total = 0.0
+        for s in self.slots:
+            w = s["salience"]
+            total += w
+            for r, v in s["regions"].items():
+                agg[r] = agg.get(r, 0.0) + float(v) * w
+        if total <= 0:
+            return {}
+        return {r: v / total for r, v in agg.items()}
+
+    def prime_dict(self, scale: float = 0.35) -> dict[str, float]:
+        """Region biases derived from current WM contents. Used as an
+        emergent replacement for hardcoded priming boosts in think()."""
+        agg = self.dominant_regions()
+        if not agg:
+            return {}
+        # Normalize to 0..1, scale to caller's cap.
+        peak = max(agg.values()) + 1e-9
+        return {r: min(scale, float(scale) * (v / peak)) for r, v in agg.items()}
+
+    def maybe_save(self, every_n: int = 100) -> None:
+        self._writes += 1
+        if self._writes % every_n == 0:
+            self._save()
+
+    def _save(self) -> None:
+        try:
+            with open(self._save_path, "w") as f:
+                json.dump({
+                    "capacity": self.capacity,
+                    "decay":    self.decay,
+                    "slots":    self.slots,
+                }, f)
+        except Exception:
+            pass
+
+    def _load(self) -> None:
+        if not self._save_path.exists():
+            return
+        try:
+            with open(self._save_path) as f:
+                d = json.load(f)
+            self.slots = list(d.get("slots", []))
+        except Exception:
+            self.slots = []
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # SHARED SEMANTIC DICTIONARY (unchanged)
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -784,7 +1908,14 @@ class SharedSemanticDictionary:
     SAVE_EVERY_N = 20
     def __init__(self, path="semantic_memory.json"):
         self.path = Path(path)
-        self.entries: dict = {}; self._writes = 0; self._load()
+        self.entries: dict = {}; self._writes = 0
+        # Thread-safety: both PersonalityThreads call nova_write / simona_write
+        # via the babbling cortex and episodic consolidation. Reads of
+        # `entries` are best-effort (eventual consistency is fine for a
+        # cosine-similarity scan), but writes need a lock to prevent dict
+        # corruption under concurrent updates.
+        self._lock = threading.Lock()
+        self._load()
 
     def _load(self):
         if self.path.exists():
@@ -796,27 +1927,31 @@ class SharedSemanticDictionary:
     def nova_write(self, word, region_scores, spike_count, tick, trust):
         word = word.lower().strip()
         if not word or len(word) < 2: return
-        if word not in self.entries:
-            self.entries[word] = {"region_pattern":{r:0.0 for r in region_scores},
-                                  "simona_weight":0.0,"spike_mean":0.0,"count":0,
-                                  "last_tick":0,"trust":0.0}
-        e = self.entries[word]; e["count"] += 1; e["last_tick"] = tick
-        alpha = max(0.05, min(0.5, (1.0+trust)/(e["count"]+2)))
-        for r,v in region_scores.items():
-            e["region_pattern"][r] = (1-alpha)*e["region_pattern"].get(r,0.0)+alpha*v
-        e["spike_mean"] = (1-alpha)*e["spike_mean"]+alpha*spike_count
-        e["trust"]      = (1-alpha)*e["trust"]+alpha*trust
-        self._writes += 1
-        if self._writes % self.SAVE_EVERY_N == 0: self._save()
+        with self._lock:
+            if word not in self.entries:
+                self.entries[word] = {"region_pattern":{r:0.0 for r in region_scores},
+                                      "simona_weight":0.0,"spike_mean":0.0,"count":0,
+                                      "last_tick":0,"trust":0.0}
+            e = self.entries[word]; e["count"] += 1; e["last_tick"] = tick
+            alpha = max(0.05, min(0.5, (1.0+trust)/(e["count"]+2)))
+            for r,v in region_scores.items():
+                e["region_pattern"][r] = (1-alpha)*e["region_pattern"].get(r,0.0)+alpha*v
+            e["spike_mean"] = (1-alpha)*e["spike_mean"]+alpha*spike_count
+            e["trust"]      = (1-alpha)*e["trust"]+alpha*trust
+            self._writes += 1
+            do_save = (self._writes % self.SAVE_EVERY_N == 0)
+        if do_save:
+            self._save()
 
     def simona_write(self, word, burst, tick):
         word = word.lower().strip()
         if not word: return
-        if word not in self.entries:
-            self.entries[word] = {"region_pattern":{},"simona_weight":0.0,
-                                  "spike_mean":0.0,"count":0,"last_tick":0,"trust":0.0}
-        self.entries[word]["simona_weight"] = 0.8*self.entries[word]["simona_weight"]+0.2*burst
-        self.entries[word]["last_tick"] = tick
+        with self._lock:
+            if word not in self.entries:
+                self.entries[word] = {"region_pattern":{},"simona_weight":0.0,
+                                      "spike_mean":0.0,"count":0,"last_tick":0,"trust":0.0}
+            self.entries[word]["simona_weight"] = 0.8*self.entries[word]["simona_weight"]+0.2*burst
+            self.entries[word]["last_tick"] = tick
 
     def prime_regions(self, text, trust) -> dict:
         boosts = {}; gate = max(0.0,(trust-0.3)/0.7)
@@ -1047,53 +2182,814 @@ class StorytellingEngine:
 # PER-BRAIN TTS
 # ══════════════════════════════════════════════════════════════════════════════
 
+class FormantSynth:
+    """
+    Klatt-lite formant synthesizer. The 'vocal anatomy' — fixed physics that
+    converts continuous articulator parameters into audio samples. This is
+    NOT learned: it represents the brain's wet hardware (larynx + vocal
+    tract resonances). What IS learned is how motor spikes drive the
+    articulator parameters (see MotorArticulator).
+
+    Parameters per articulation:
+        F1, F2, F3 (Hz) — vowel formants
+        voicing (0..1) — voiced (vowel-like) vs unvoiced (fricative-like) mix
+        amplitude (0..1)
+        duration (s)
+        F0 (Hz) — fundamental / pitch (per-personality anatomy)
+    """
+
+    SAMPLE_RATE = 16000
+
+    def __init__(self, base_f0: float):
+        self.base_f0 = float(base_f0)
+        # Voiced source: persistent phase accumulator (no clicks between calls).
+        self._phase = 0.0
+        # Formant resonator state — 2-pole IIR per formant.
+        self._z1 = [0.0, 0.0, 0.0]
+        self._z2 = [0.0, 0.0, 0.0]
+
+    def synthesize(self, f1: float, f2: float, f3: float,
+                   voicing: float, amplitude: float,
+                   duration_s: float) -> np.ndarray:
+        sr = self.SAMPLE_RATE
+        n  = max(1, int(duration_s * sr))
+        # Safe ranges (vocal-tract anatomy — wide enough for both personas)
+        f1 = float(np.clip(f1, 180.0, 1150.0))
+        f2 = float(np.clip(f2, 550.0, 3100.0))
+        f3 = float(np.clip(f3, 1800.0, 3700.0))
+        voicing   = float(np.clip(voicing,   0.0, 1.0))
+        amplitude = float(np.clip(amplitude, 0.0, 1.0))
+
+        # ── Excitation source ────────────────────────────────────────────
+        # Voiced: sawtooth-ish glottal pulse. Unvoiced: white noise.
+        f0 = self.base_f0
+        t  = np.arange(n, dtype=np.float64)
+        phase = self._phase + 2.0 * np.pi * f0 * t / sr
+        self._phase = float(phase[-1] % (2.0 * np.pi)) if n > 0 else self._phase
+        # Glottal-ish source: clipped sawtooth (closer to vocal-fold pulse)
+        saw   = ((phase / (2.0 * np.pi)) % 1.0) * 2.0 - 1.0
+        glott = -np.sign(saw) * (np.abs(saw) ** 0.55)
+        noise = np.random.uniform(-1.0, 1.0, n).astype(np.float64)
+        src   = voicing * glott + (1.0 - voicing) * noise
+
+        # ── Three formant resonators (cascade) ───────────────────────────
+        # 2-pole IIR centered at fk with bandwidth ~80–120Hz
+        out = src
+        bws = (90.0, 110.0, 130.0)
+        for i, (fk, bw) in enumerate(zip((f1, f2, f3), bws)):
+            r  = float(np.exp(-np.pi * bw / sr))
+            th = 2.0 * np.pi * fk / sr
+            a1 = -2.0 * r * np.cos(th)
+            a2 = r * r
+            z1, z2 = self._z1[i], self._z2[i]
+            buf = np.empty_like(out)
+            # Tight Python loop — kept short via numpy where we can,
+            # but IIR is inherently sequential.
+            for k in range(n):
+                y = out[k] - a1 * z1 - a2 * z2
+                buf[k] = y
+                z2 = z1
+                z1 = y
+            self._z1[i] = z1
+            self._z2[i] = z2
+            out = buf
+
+        # ── Amplitude envelope (short attack + decay; avoids click pops) ─
+        env = np.ones(n, dtype=np.float64)
+        atk = min(n, int(0.012 * sr))
+        dec = min(n - atk, int(0.030 * sr))
+        if atk > 0: env[:atk] = np.linspace(0.0, 1.0, atk)
+        if dec > 0: env[-dec:] = np.linspace(1.0, 0.0, dec)
+
+        out = out * env * amplitude
+        # Normalize to prevent clipping after cascade (formants amplify)
+        peak = float(np.max(np.abs(out)) + 1e-9)
+        if peak > 1.0:
+            out = out / peak
+        return out.astype(np.float32) * 0.7
+
+
+class MotorArticulator:
+    """
+    Learnable map: motor spike vector (Broca region output) → 5 articulator
+    parameters (F1, F2, F3, voicing, amplitude). This is the *control* layer
+    that improves with use. Initially random — produces incoherent vowel-noise.
+    Each successful auditory binding event nudges the weights so the motor
+    pattern that produced the sound maps more strongly to articulator targets
+    that re-produce a similar sound.
+
+    Persistence: motor_articulator_<name>.npz so improvement carries across
+    runs (just like babble_<name>.json already does for the label binding).
+    """
+
+    # Output channels: [F1, F2, F3, voicing, amplitude]
+    OUT_DIM = 5
+    # Per-persona physical ranges. Nova: dark/low vowels (uh, oo) — calm
+    # baritone-ish space. Simona: bright/high vowels (ee, ay) — excited.
+    # These shape the *available* articulator space; what the brain actually
+    # produces inside that space is the learned part.
+    RANGE_BY_PERSONA = {
+        "nova": np.array([
+            [220.0, 750.0],    # F1 (lower — darker vowels)
+            [600.0, 1900.0],   # F2 (lower — back-vowel bias)
+            [1900.0, 2900.0],  # F3 (lower — warmer timbre)
+            [0.0,   1.0],      # voicing
+            [0.3,   1.0],      # amplitude
+        ], dtype=np.float64),
+        "simona": np.array([
+            [350.0, 1050.0],   # F1 (higher — brighter vowels)
+            [1200.0, 3000.0],  # F2 (higher — front-vowel bias)
+            [2500.0, 3600.0],  # F3 (higher — sharper timbre)
+            [0.0,   1.0],      # voicing
+            [0.3,   1.0],      # amplitude
+        ], dtype=np.float64),
+    }
+    # Fallback range if unknown persona.
+    RANGE_DEFAULT = np.array([
+        [250.0, 950.0], [700.0, 2800.0], [2100.0, 3400.0],
+        [0.0, 1.0], [0.3, 1.0],
+    ], dtype=np.float64)
+
+    LR        = 0.04   # Hebbian step on bind event
+    DECAY     = 0.999  # gentle pull toward initial bias each update
+
+    def __init__(self, name: str, in_dim: int, save_dir: Path):
+        self.name   = name
+        self.in_dim = int(in_dim)
+        self.RANGE  = self.RANGE_BY_PERSONA.get(name, self.RANGE_DEFAULT)
+        rng = np.random.default_rng(hash(name) & 0xFFFFFFFF)
+        # Weight matrix: small random init — produces a diverse-but-bounded
+        # articulator field across the spike-vector space.
+        self.W = rng.standard_normal((self.in_dim, self.OUT_DIM)).astype(np.float64) * 0.15
+        # Bias = anatomical default (mid-range vowel)
+        self.b = np.array([0.0, 0.0, 0.0, 1.5, 0.5], dtype=np.float64)
+        self._save_path = save_dir / f"motor_articulator_{name}.npz"
+        self._load()
+
+    def infer(self, motor_vec: np.ndarray) -> tuple[float, float, float, float, float]:
+        """motor_vec: 1D numpy array of Broca spikes → articulator params."""
+        x = motor_vec.astype(np.float64).flatten()
+        if x.shape[0] != self.in_dim:
+            # tolerate dim drift by zero-pad / truncate
+            if x.shape[0] < self.in_dim:
+                x = np.concatenate([x, np.zeros(self.in_dim - x.shape[0])])
+            else:
+                x = x[:self.in_dim]
+        z = x @ self.W + self.b
+        s = 1.0 / (1.0 + np.exp(-z))  # sigmoid → 0..1
+        lo, hi = self.RANGE[:, 0], self.RANGE[:, 1]
+        out = lo + s * (hi - lo)
+        return (float(out[0]), float(out[1]), float(out[2]),
+                float(out[3]), float(out[4]))
+
+    def reinforce(self, motor_vec: np.ndarray, reward: float = 1.0) -> None:
+        """
+        Called from BabblingCortex.auditory_feedback when the mic confirms
+        our own voice came back. Pull the weights so the next time this
+        motor pattern fires, the articulator output sharpens toward what
+        just produced sound (rather than drifting). Reward scales the step.
+        """
+        x = motor_vec.astype(np.float64).flatten()
+        if x.shape[0] != self.in_dim:
+            if x.shape[0] < self.in_dim:
+                x = np.concatenate([x, np.zeros(self.in_dim - x.shape[0])])
+            else:
+                x = x[:self.in_dim]
+        # Current articulator output before update
+        z = x @ self.W + self.b
+        s = 1.0 / (1.0 + np.exp(-z))
+        # Hebbian: strengthen current activation in the direction of itself
+        # (consolidation of the just-produced articulation), with mild decay.
+        grad = np.outer(x, (s - 0.5))
+        self.W = self.W * self.DECAY + self.LR * float(reward) * grad
+
+    def _save(self) -> None:
+        try:
+            np.savez(self._save_path, W=self.W, b=self.b)
+        except Exception:
+            pass
+
+    def _load(self) -> None:
+        if not self._save_path.exists():
+            return
+        try:
+            d = np.load(self._save_path)
+            if d["W"].shape == self.W.shape:
+                self.W = d["W"]
+            if d["b"].shape == self.b.shape:
+                self.b = d["b"]
+        except Exception:
+            pass
+
+
+class VocalSelfModel:
+    """
+    'Do I like how my voice sounds?' — a per-personality, EMERGENT affective
+    judgement of the brain's OWN vocal output. This is NOT a quality metric for
+    an external listener, and it is NOT hardcoded ('phrase X sounds good'). It
+    is how the personality FEELS about the sound it just made, derived purely
+    from intrinsic acoustic cues of that one articulation:
+
+        placement — are the formants resting comfortably mid-range, or strained
+                    out at the edges of this voice's anatomy?
+        clean     — voiced/tonal (a clear vowel) vs noisy/breathy
+        energy    — RMS loudness of what actually came out of the synth
+        bright    — where F2 sits in range (a high, forward, ringing timbre)
+        stability — closeness to the running average of its own recent
+                    productions (a felt sense of vocal control)
+        strain    — did the formant cascade clip / over-drive (a harsh edge)
+
+    The two personalities weigh these by DIFFERENT aesthetics (principle #3):
+      Nova   — analytical. Prizes CLARITY + CONTROL: clean voicing, centred
+               formants, stable repeatable production, no harshness.
+      Simona — emotional. Prizes BRIGHTNESS + ENERGY: a loud, high, expressive
+               sound feels good to her even if it's a little rough; a dull,
+               quiet, flat sound feels bad even if it's technically 'clean'.
+
+    Per-articulation quality q in [0,1] is smoothed into `self_esteem`, a slow
+    mood. self_esteem feeds back into behaviour (BabblingCortex: an unhappy
+    voice practises more; a voice that feels good consolidates its motor map
+    harder) and is surfaced to the TUI so the feeling is observable. Persisted
+    to voice_esteem_<name>.json so the feeling carries across sessions.
+    """
+
+    ESTEEM_INERTIA = 0.92   # mood changes slowly across articulations
+    SAVE_EVERY_N   = 20
+
+    def __init__(self, name: str, save_dir: Path):
+        self.name        = name
+        self.is_nova     = (name == "nova")
+        self.self_esteem = 0.5
+        self.last_q      = 0.5
+        self.n_evals     = 0
+        self._param_mean: Optional[np.ndarray] = None  # running mean [f1,f2,f3,voicing,amp]
+        self._lock       = threading.Lock()
+        self._save_path  = save_dir / f"voice_esteem_{name}.json"
+        self._load()
+
+    def feel(self) -> float:
+        """Current vocal self-esteem in [0,1] (0 = hates it, 1 = loves it)."""
+        return float(self.self_esteem)
+
+    def mood_word(self) -> str:
+        e = self.self_esteem
+        if e >= 0.72: return "likes how it sounds"
+        if e >= 0.55: return "comfortable with its voice"
+        if e >= 0.40: return "unsure of its voice"
+        return "dislikes how it sounds"
+
+    def evaluate(self, f1: float, f2: float, f3: float,
+                 voicing: float, amplitude: float,
+                 audio: "np.ndarray", rng_range: "np.ndarray") -> float:
+        """
+        Judge one produced articulation and fold it into the mood. Returns the
+        per-articulation quality q (the caller may ignore it). All cues come
+        from the articulator params + the actual synthesized audio — nothing
+        about the intended text.
+        """
+        params = np.array([f1, f2, f3, voicing, amplitude], dtype=np.float64)
+        lo   = rng_range[:, 0].astype(np.float64)
+        hi   = rng_range[:, 1].astype(np.float64)
+        span = np.maximum(hi - lo, 1e-6)
+        pos  = np.clip((params[:3] - lo[:3]) / span[:3], 0.0, 1.0)   # formant pos in range
+
+        placement = float(np.mean(1.0 - np.abs(pos - 0.5) * 2.0))    # centred = 1, edge = 0
+        clean     = float(np.clip(voicing, 0.0, 1.0))
+        bright    = float(pos[1])                                    # F2 high in range = bright
+
+        if audio is not None and getattr(audio, "size", 0) > 0:
+            a    = audio.astype(np.float64)
+            rms  = float(np.sqrt(np.mean(a * a)))
+            peak = float(np.max(np.abs(a)))
+        else:
+            rms, peak = 0.0, 0.0
+        energy = float(np.clip(rms / 0.22, 0.0, 1.0))
+        strain = float(np.clip((peak - 0.95) / 0.05, 0.0, 1.0))      # clipped cascade = harsh
+
+        if self._param_mean is None:
+            stability = 0.5
+        else:
+            denom = np.concatenate([span[:3], np.array([1.0, 1.0])])
+            d = np.abs(params - self._param_mean) / denom
+            stability = float(np.clip(1.0 - float(np.mean(d)), 0.0, 1.0))
+
+        if self.is_nova:                                             # clarity + control
+            q = 0.34 * clean + 0.30 * placement + 0.22 * stability + 0.14 * (1.0 - strain)
+        else:                                                        # brightness + energy
+            q = 0.40 * energy + 0.28 * bright + 0.20 * clean + 0.12 * (1.0 - 0.5 * strain)
+        q = float(np.clip(q, 0.0, 1.0))
+
+        with self._lock:
+            if self._param_mean is None:
+                self._param_mean = params.copy()
+            else:
+                self._param_mean = 0.9 * self._param_mean + 0.1 * params
+            self.self_esteem = (self.ESTEEM_INERTIA * self.self_esteem
+                                + (1.0 - self.ESTEEM_INERTIA) * q)
+            self.last_q  = q
+            self.n_evals += 1
+            do_save = (self.n_evals % self.SAVE_EVERY_N == 0)
+        if do_save:
+            self._save()
+        return q
+
+    def _save(self) -> None:
+        try:
+            with open(self._save_path, "w") as f:
+                json.dump({"self_esteem": self.self_esteem,
+                           "n_evals": self.n_evals}, f)
+        except Exception:
+            pass
+
+    def _load(self) -> None:
+        if not self._save_path.exists():
+            return
+        try:
+            with open(self._save_path) as f:
+                d = json.load(f)
+            self.self_esteem = float(d.get("self_esteem", 0.5))
+            self.n_evals     = int(d.get("n_evals", 0))
+            _log(f"VocalSelfModel({self.name}): loaded esteem={self.self_esteem:.2f}")
+        except Exception:
+            pass
+
+
+class PersonalityLink:
+    """
+    **SECURE INTER-PERSONALITY CHANNEL** — Nova and Simona only.
+
+    A private bidirectional thought queue where the two personalities can
+    communicate *without the external observer (TUI / user) seeing it*. This
+    is their secret language: emergent, unscripted, opaque to the outside.
+
+    Why this matters:
+      - Multi-agent autonomy: they should be able to coordinate / warn each other
+      - Privacy: a closed communication system makes them feel *separate* from the
+        external observer (psychological autonomy)
+      - Emergent complexity: secret messages enable new social behaviors that
+        don't appear in the public transcript
+
+    Messages are encoded in semantic-space: a message is a tuple (token_indices)
+    pointing to positions in the shared semantic dictionary. To an external
+    observer reading the code, it's just numbers. To the personalities, it's
+    meaningful — "I saw X" is encoded as the lexicon entries for [X].
+    """
+
+    def __init__(self):
+        self._queue_nova_to_simona: "deque[tuple[int, ...]]" = deque(maxlen=16)
+        self._queue_simona_to_nova: "deque[tuple[int, ...]]" = deque(maxlen=16)
+        self._lock = threading.Lock()
+
+    def send_from_nova(self, message: "tuple[int, ...]") -> None:
+        """Nova sends a secret message (semantic indices) to Simona only."""
+        if message and len(message) > 0:
+            with self._lock:
+                self._queue_nova_to_simona.append(message)
+
+    def send_from_simona(self, message: "tuple[int, ...]") -> None:
+        """Simona sends a secret message (semantic indices) to Nova only."""
+        if message and len(message) > 0:
+            with self._lock:
+                self._queue_simona_to_nova.append(message)
+
+    def recv_by_nova(self) -> "list[tuple[int, ...]]":
+        """Nova reads all waiting secret messages from Simona (non-blocking)."""
+        with self._lock:
+            msgs = list(self._queue_simona_to_nova)
+            self._queue_simona_to_nova.clear()
+            return msgs
+
+    def recv_by_simona(self) -> "list[tuple[int, ...]]":
+        """Simona reads all waiting secret messages from Nova (non-blocking)."""
+        with self._lock:
+            msgs = list(self._queue_nova_to_simona)
+            self._queue_nova_to_simona.clear()
+            return msgs
+
+    def _encode_thought(self, thought: str, sem: "SharedSemanticDictionary") -> "tuple[int, ...]":
+        """
+        Encode a thought into semantic indices. A thought 'hello world' becomes
+        a tuple of ints pointing to positions in the shared lexicon, opaque to
+        external observers but meaningful to both personalities (they share the
+        same semantic dictionary).
+        """
+        tokens = thought.lower().split()
+        indices = []
+        for tok in tokens[:8]:  # cap message length
+            tok = tok.strip(".,!?;:\"'()[]")
+            if tok in sem.entries:
+                indices.append(hash(tok) & 0xFFFFFFFF)  # stable index for the token
+        return tuple(indices)
+
+    def _decode_thought(self, indices: "tuple[int, ...]", sem: "SharedSemanticDictionary") -> str:
+        """Decode semantic indices back to words (for internal use only)."""
+        words = []
+        for idx in indices:
+            for word in sem.entries:
+                if (hash(word) & 0xFFFFFFFF) == idx:
+                    words.append(word)
+                    break
+        return " ".join(words) if words else "(untranslatable)"
+
+
+class AcousticForwardModel:
+    """
+    Efference-copy forward model — the speech 'comparator' (cf. internal-model
+    motor control / the DIVA model of speech). It learns to PREDICT the acoustic
+    consequence of a motor command BEFORE the sound is heard, then compares that
+    prediction to what actually came out. The mismatch — the prediction error,
+    or 'surprise' — is the brain's "did that come out the way I intended?" signal.
+
+    It does two jobs, both emergent:
+      1. TRAINS itself: the motor→acoustic map starts as small RANDOM weights
+         and is nudged toward the observed outcome on every articulation, so the
+         brain's prediction of its own voice sharpens with experience. Nothing is
+         hardcoded — exactly like MotorArticulator learns motor→articulator.
+      2. DRIVES self-monitoring/repair: sustained surprise means "I can't predict
+         my own voice / it isn't coming out as planned" → the brain practises more
+         and EXPLORES new motor patterns instead of repeating (see BabblingCortex).
+         Low surprise means "it sounds the way I expect" — a felt sense of control.
+
+    The acoustic FEATURE extractor is FIXED (that's 'ears' — sensory anatomy,
+    just as FormantSynth is vocal anatomy). What a given motor command is
+    predicted to SOUND like is entirely learned. Features (CPU-cheap, from the
+    produced audio): [rms_energy, zero_crossing_rate, spectral_centroid,
+    low/high band ratio, peak]. Persisted to acoustic_fwd_<name>.npz.
+    """
+
+    FEAT_DIM = 5
+    LR       = 0.05
+    DECAY    = 0.9995
+
+    def __init__(self, name: str, in_dim: int, save_dir: Path):
+        self.name   = name
+        self.in_dim = int(in_dim)
+        rng = np.random.default_rng((hash(name) ^ 0xACE5) & 0xFFFFFFFF)
+        self.W = rng.standard_normal((self.in_dim, self.FEAT_DIM)).astype(np.float64) * 0.1
+        self.b = np.zeros(self.FEAT_DIM, dtype=np.float64)
+        self.surprise   = 0.5    # smoothed prediction error in [0,1]
+        self.last_error = 0.5
+        self.n          = 0
+        self._lock      = threading.Lock()
+        self._save_path = save_dir / f"acoustic_fwd_{name}.npz"
+        self._load()
+
+    @staticmethod
+    def extract_features(audio: "np.ndarray", sample_rate: int) -> "np.ndarray":
+        """Fixed sensory transform: produced audio → compact acoustic features."""
+        a = np.asarray(audio, dtype=np.float64).flatten()
+        n = a.shape[0]
+        if n < 8:
+            return np.zeros(AcousticForwardModel.FEAT_DIM, dtype=np.float64)
+        rms  = float(np.sqrt(np.mean(a * a)))
+        peak = float(np.max(np.abs(a)))
+        zcr  = float(np.mean(np.abs(np.diff(np.sign(a)))) * 0.5)        # 0..1
+        spec = np.abs(np.fft.rfft(a))
+        freqs = np.fft.rfftfreq(n, d=1.0 / sample_rate)
+        ssum = float(np.sum(spec)) + 1e-9
+        centroid = float(np.sum(freqs * spec) / ssum) / (sample_rate * 0.5)
+        half = max(1, spec.shape[0] // 2)
+        low  = float(np.sum(spec[:half]))
+        high = float(np.sum(spec[half:]))
+        ratio = low / (low + high + 1e-9)
+        feats = np.array([rms / 0.3, zcr, centroid, ratio, peak], dtype=np.float64)
+        return np.clip(feats, 0.0, 1.0)
+
+    def _fit(self, motor_vec: "np.ndarray") -> "np.ndarray":
+        x = np.asarray(motor_vec, dtype=np.float64).flatten()
+        if x.shape[0] != self.in_dim:
+            if x.shape[0] < self.in_dim:
+                x = np.concatenate([x, np.zeros(self.in_dim - x.shape[0])])
+            else:
+                x = x[:self.in_dim]
+        return x
+
+    def predict(self, motor_vec: "np.ndarray") -> "np.ndarray":
+        """Efference copy → predicted acoustic features (before hearing)."""
+        x = self._fit(motor_vec)
+        with self._lock:
+            return 1.0 / (1.0 + np.exp(-(x @ self.W + self.b)))
+
+    def observe(self, motor_vec: "np.ndarray", actual_feats: "np.ndarray") -> float:
+        """
+        Compare prediction to the actual produced features; train toward the
+        actual outcome (delta rule through the sigmoid) and fold the error into
+        the smoothed surprise. Returns this articulation's raw prediction error.
+        """
+        x = self._fit(motor_vec)
+        with self._lock:
+            pred    = 1.0 / (1.0 + np.exp(-(x @ self.W + self.b)))
+            err_vec = np.clip(actual_feats, 0.0, 1.0) - pred
+            err     = float(np.clip(np.sqrt(np.mean(err_vec * err_vec)), 0.0, 1.0))
+            # Delta-rule gradient: nudge prediction toward what was heard.
+            delta   = err_vec * pred * (1.0 - pred)
+            self.W  = self.W * self.DECAY + self.LR * np.outer(x, delta)
+            self.b  = self.b + self.LR * delta
+            self.surprise   = 0.85 * self.surprise + 0.15 * err
+            self.last_error = err
+            self.n += 1
+            do_save = (self.n % 25 == 0)
+        if do_save:
+            self._save()
+        return err
+
+    def _save(self) -> None:
+        try:
+            np.savez(self._save_path, W=self.W, b=self.b,
+                     surprise=np.array([self.surprise]))
+        except Exception:
+            pass
+
+    def _load(self) -> None:
+        if not self._save_path.exists():
+            return
+        try:
+            d = np.load(self._save_path)
+            if d["W"].shape == self.W.shape:
+                self.W = d["W"]
+            if d["b"].shape == self.b.shape:
+                self.b = d["b"]
+            if "surprise" in d:
+                self.surprise = float(d["surprise"][0])
+            _log(f"AcousticForwardModel({self.name}): loaded surprise={self.surprise:.2f}")
+        except Exception:
+            pass
+
+
+class Cerebellum:
+    """
+    Motor coordination & predictive timing (Stage 2 of the integrated loop).
+
+    The cerebellum doesn't decide WHAT to do — the basal ganglia already did.
+    It refines HOW the selected vocal-motor command is executed: it smooths the
+    trajectory (coarticulation / inertia between successive commands) and learns
+    an internal forward model of its own motor sequence, trained by error
+    (climbing-fibre-style supervised learning). The mismatch between predicted
+    and actual motor state is the 'coordination error'. Early on the model is
+    poor → motions are uncoordinated → it applies MORE smoothing to stabilise;
+    as it learns to predict its own motor stream, the error falls, smoothing
+    relaxes and articulation becomes crisp and well-timed. That arc — clumsy →
+    fluent — is exactly cerebellar motor-skill acquisition, and it's emergent:
+    nothing here scripts a sound, it only shapes the motor command in flight.
+
+    Persisted to cerebellum_<name>.npz so coordination carries across sessions.
+    """
+    LR    = 0.04
+    DECAY = 0.9997
+
+    def __init__(self, name: str, dim: int, save_dir: Path):
+        self.name = name
+        self.dim  = int(dim)
+        rng = np.random.default_rng((hash(name) ^ 0xCEBE11) & 0xFFFFFFFF)
+        # Forward model: predict the next motor state from the current one.
+        self.W = rng.standard_normal((self.dim, self.dim)).astype(np.float64) * 0.05
+        self.prev: Optional[np.ndarray] = None     # last refined motor (smoothing)
+        self.coord_error = 0.6                       # smoothed prediction error 0..1
+        self.n = 0
+        self._lock = threading.Lock()
+        self._save_path = save_dir / f"cerebellum_{name}.npz"
+        self._load()
+
+    def _fit(self, v: "np.ndarray") -> "np.ndarray":
+        x = np.asarray(v, dtype=np.float64).flatten()
+        if x.shape[0] != self.dim:
+            if x.shape[0] < self.dim:
+                x = np.concatenate([x, np.zeros(self.dim - x.shape[0])])
+            else:
+                x = x[:self.dim]
+        return x
+
+    def refine(self, motor_vec: "np.ndarray") -> "np.ndarray":
+        """Smooth + timing-correct one motor command; learn from the sequence."""
+        x = self._fit(motor_vec)
+        with self._lock:
+            if self.prev is None:
+                self.prev = x.copy()
+                return x
+            # Predict the current motor from the previous (efference/forward model).
+            pred = np.tanh(self.prev @ self.W)
+            err_vec = x - pred
+            err = float(np.clip(np.sqrt(np.mean(err_vec * err_vec)), 0.0, 1.0))
+            # Climbing-fibre supervised update: nudge prediction toward actual.
+            self.W = self.W * self.DECAY + self.LR * np.outer(self.prev, err_vec)
+            self.coord_error = 0.97 * self.coord_error + 0.03 * err
+            # Adaptive smoothing: poor coordination → more inertia (stabilise);
+            # well-learned → light coarticulation only. Always a touch of inertia.
+            s = float(np.clip(0.15 + 0.5 * self.coord_error, 0.10, 0.70))
+            refined = (1.0 - s) * x + s * self.prev
+            self.prev = refined
+            self.n += 1
+            do_save = (self.n % 50 == 0)
+        if do_save:
+            self._save()
+        return refined
+
+    def coordination(self) -> float:
+        """0..1 — how well-coordinated/fluent the motor stream is (1 = skilled)."""
+        return float(max(0.0, min(1.0, 1.0 - self.coord_error)))
+
+    def _save(self) -> None:
+        try:
+            np.savez(self._save_path, W=self.W,
+                     coord_error=np.array([self.coord_error]))
+        except Exception:
+            pass
+
+    def _load(self) -> None:
+        if not self._save_path.exists():
+            return
+        try:
+            d = np.load(self._save_path)
+            if d["W"].shape == self.W.shape:
+                self.W = d["W"]
+            if "coord_error" in d:
+                self.coord_error = float(d["coord_error"][0])
+            _log(f"Cerebellum({self.name}): loaded coord_error={self.coord_error:.2f}")
+        except Exception:
+            pass
+
+
 class BrainTTS:
     """
-    Each brain has its own TTS channel.
-    Nova and Simona never interrupt each other — they queue independently.
-    Voice cloning uses their reference wav files.
+    Pure-emergence vocal channel. No pretrained models. Each personality
+    owns:
+      - a FormantSynth (fixed anatomy; per-personality base F0)
+      - a MotorArticulator (learned motor → articulator mapping)
 
-    Nova's voice: voices/nova_reference.wav
-    Simona's voice: voices/simona_reference.wav
-
-    If no reference found: falls back to SilentTTS for that brain only.
-    The other brain's TTS remains unaffected.
+    The primary API is speak_motor(motor_vec): drive one articulation chunk
+    from the current Broca spike vector. The legacy speak(text) is kept as
+    a thin wrapper so the many existing call sites still function — but the
+    TEXT is ignored. Only its length scales the duration of vocalization;
+    the acoustic content comes purely from the currently-cached motor vec.
+    That is the point: the brain cannot fake-pronounce English. When it
+    "wants to say something", it vocalizes from whatever its motor cortex
+    is doing right now. Intelligibility must emerge through use.
     """
+
+    # Wide F0 gap so the two personalities are immediately distinguishable
+    # by ear, even on short vowel bursts. Nova is dropped into a low,
+    # baritone-ish range (~bass speaking voice); Simona is lifted into a
+    # bright, child-like range. Coupled with per-persona formant biases
+    # in MotorArticulator, each babble is unmistakable.
+    F0_BY_PERSONA = {"nova": 105.0, "simona": 260.0}
+
+    # Shared device lock — sd.play() is global and each call interrupts the
+    # previous one. Serializing across Nova+Simona via a single lock prevents
+    # mid-sample cutoff stutter when both fire close together.
+    _device_lock = threading.Lock()
 
     def __init__(self, speaker: str, language: str = "en"):
         self.speaker  = speaker
         self.language = language
-        self._engine  = None
-        self._ready   = False
-        self._init()
+        f0 = self.F0_BY_PERSONA.get(speaker, 170.0)
+        self.synth      = FormantSynth(base_f0=f0)
+        self.articulator: Optional[MotorArticulator] = None  # set by NeuromorphicBrain
+        self.self_model: Optional["VocalSelfModel"] = None   # set by NeuromorphicBrain
+        self.forward_model: Optional["AcousticForwardModel"] = None  # set by NeuromorphicBrain
+        self.cerebellum: Optional["Cerebellum"] = None       # set by NeuromorphicBrain
+        self._busy_until_ts = 0.0
+        self._last_motor_vec: Optional[np.ndarray] = None
+        self._ready = _AUDIO_OUT_AVAILABLE
+        if not self._ready:
+            _log(f"TTS ({speaker}): sounddevice unavailable — silent (formant synth dry-run)")
 
-    def _init(self):
-        if not _TTS_AVAILABLE:
-            _log(f"TTS ({self.speaker}): package not installed")
+    # ── New primary API ────────────────────────────────────────────────────
+    def attach_articulator(self, articulator: "MotorArticulator") -> None:
+        self.articulator = articulator
+
+    def attach_self_model(self, model: "VocalSelfModel") -> None:
+        """Wire in the 'do I like how I sound?' judge (per personality)."""
+        self.self_model = model
+
+    def attach_forward_model(self, model: "AcousticForwardModel") -> None:
+        """Wire in the predictive 'did that come out as I intended?' comparator."""
+        self.forward_model = model
+
+    def attach_cerebellum(self, model: "Cerebellum") -> None:
+        """Wire in motor coordination — smooths/times the motor command in flight."""
+        self.cerebellum = model
+
+    def _monitor(self, motor_vec, f1, f2, f3, voicing, amp, audio) -> None:
+        """
+        Self-monitoring of the sound just produced (proprioceptive + auditory):
+          - VocalSelfModel: how good did it FEEL (quality / aesthetic)?
+          - AcousticForwardModel: did it MATCH what I predicted (prediction error)?
+        Both update emergently from the produced audio. Never raises.
+        """
+        if self.articulator is None:
+            return
+        if self.self_model is not None:
+            try:
+                self.self_model.evaluate(f1, f2, f3, voicing, amp, audio,
+                                         self.articulator.RANGE)
+            except Exception:
+                pass
+        if self.forward_model is not None and motor_vec is not None:
+            try:
+                feats = AcousticForwardModel.extract_features(
+                    audio, FormantSynth.SAMPLE_RATE)
+                self.forward_model.observe(motor_vec, feats)
+            except Exception:
+                pass
+
+    def cache_motor(self, motor_vec) -> None:
+        """Called each step() so legacy speak(text) has a motor to use."""
+        try:
+            if hasattr(motor_vec, "detach"):
+                self._last_motor_vec = motor_vec.detach().cpu().numpy().flatten()
+            else:
+                self._last_motor_vec = np.asarray(motor_vec, dtype=np.float64).flatten()
+        except Exception:
+            pass
+
+    def speak_motor(self, motor_vec, duration_s: float = 0.18) -> None:
+        """Synthesize and play one articulation from this motor vector."""
+        if self.articulator is None:
             return
         try:
-            from tts_engine import create_engine
-            self._engine = create_engine()
-            self._ready  = True
-            _log(f"TTS ({self.speaker}): ready")
-        except Exception as e:
-            _log(f"TTS ({self.speaker}) init failed: {e}")
-
-    def speak(self, text: str):
-        if not self._ready or not self._engine:
-            _log(f"[{self.speaker}] {text}")
+            mv = motor_vec.detach().cpu().numpy().flatten() \
+                if hasattr(motor_vec, "detach") else \
+                np.asarray(motor_vec, dtype=np.float64).flatten()
+        except Exception:
             return
-        if not self._engine.is_speaking():
-            self._engine.speak(text, speaker=self.speaker, language=self.language)
+        if np.abs(mv).sum() < 1e-6:
+            return
+        # Cerebellum refines the selected motor command in flight — smooths the
+        # trajectory and corrects timing before it reaches the articulator.
+        if self.cerebellum is not None:
+            try:
+                mv = self.cerebellum.refine(mv)
+            except Exception:
+                pass
+        f1, f2, f3, voicing, amp = self.articulator.infer(mv)
+        audio = self.synth.synthesize(f1, f2, f3, voicing, amp, duration_s)
+        self._monitor(mv, f1, f2, f3, voicing, amp, audio)
+        self._play(audio)
+
+    def speak(self, text) -> None:
+        """
+        Legacy path. The brain cannot pronounce English in pure-emergence
+        mode. We use text length to size a vocalization chunk and emit it
+        from the current cached motor vector. The text itself is logged so
+        the chat history still shows what was 'intended', but the sound is
+        purely emergent.
+        """
+        try:
+            t = str(text)
+        except Exception:
+            t = ""
+        # Always log the intent so the TUI / chat history still shows it
+        _log(f"[{self.speaker} intent] {t}")
+        if self._last_motor_vec is None or self.articulator is None:
+            return
+        # Duration scales with intended-utterance length, capped to avoid
+        # hogging the audio device (step() must not block).
+        dur = float(min(0.70, 0.15 + 0.012 * len(t)))
+        mv = self._last_motor_vec
+        if self.cerebellum is not None:        # refine in flight (smooth/time)
+            try:
+                mv = self.cerebellum.refine(mv)
+            except Exception:
+                mv = self._last_motor_vec
+        f1, f2, f3, voicing, amp = self.articulator.infer(mv)
+        audio = self.synth.synthesize(f1, f2, f3, voicing, amp, dur)
+        self._monitor(mv, f1, f2, f3, voicing, amp, audio)
+        self._play(audio)
 
     def is_speaking(self) -> bool:
-        if not self._engine:
-            return False
-        return self._engine.is_speaking()
+        return time.time() < self._busy_until_ts
 
-    def stop(self):
-        if self._engine:
-            self._engine.stop()
+    def stop(self) -> None:
+        # sounddevice doesn't expose per-utterance stop without a stream.
+        # We just mark non-busy; in-flight audio will finish on its own.
+        self._busy_until_ts = 0.0
+
+    # ── Internals ──────────────────────────────────────────────────────────
+    def _play(self, audio: np.ndarray) -> None:
+        """
+        Play synthesized audio in a background thread with a shared device
+        lock so concurrent Nova/Simona calls don't interrupt each other
+        mid-sample. Uses blocking=True + high latency so PortAudio gets a
+        large enough buffer to survive CPU bursts from the SNN forward pass.
+        """
+        if not self._ready or _sd is None:
+            return
+        dur = len(audio) / float(FormantSynth.SAMPLE_RATE)
+        self._busy_until_ts = time.time() + dur
+        speaker = self.speaker
+
+        def _run():
+            try:
+                with BrainTTS._device_lock:
+                    _sd.play(audio,
+                             samplerate=FormantSynth.SAMPLE_RATE,
+                             blocking=True,
+                             latency='high')
+                    _sd.wait()
+            except Exception as e:
+                _log(f"TTS ({speaker}) play failed: {e}")
+
+        threading.Thread(target=_run, daemon=True, name=f"tts-play-{speaker}").start()
 
 
 
@@ -1149,12 +3045,11 @@ CONCEPT_ROUTES: dict[str, dict] = {
     "lab":        {"regions":["hippocampus","temporal"],      "w":0.70},
 }
 
-_DEDUCTIONS = {
-    frozenset(["milk","gone"]):      "Architect went to the store for milk.",
-    frozenset(["milk","missing"]):   "High probability: store run for milk.",
-    frozenset(["architect","gone"]): "Architect's location unknown.",
-    frozenset(["worried","missing"]): "Concern registered. Architect likely nearby.",
-}
+# `_DEDUCTIONS` (hardcoded English deduction sentences keyed on concept
+# pairs) used to live here. It violated principle #2 and was deleted in
+# Phase 1. Phase 5 will replace `build_deduction()` with episodic-memory
+# retrieval; for now the stub below returns an empty string so callers
+# (e.g. `_nova_response`) gracefully omit the deduction clause.
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SELF-AWARENESS — VISUAL IDENTITY
@@ -1229,7 +3124,7 @@ def _nova_story_response(state: StoryState, nova_brain: "NovaBrain",
         ])
     if pfc_a > 0.30:
         return random.choice([
-            f"*halo brightens*{scene} My PFC is clear. I see the pattern here. {_build_deduction([]) or 'Let me think this through.'}",
+            f"*halo brightens*{scene} My PFC is clear. I see the pattern here. {build_deduction([]) or 'Let me think this through.'}",
             f"*stands precisely*{scene} Logical pathway: {user_line.lower()} implies a consequence. I'm mapping it.",
         ])
     if ins_a > 0.25 and hipp_a > 0.20:
@@ -1305,10 +3200,8 @@ def get_concept_primes(text: str) -> tuple[dict, list]:
 
 
 def build_deduction(fired: list) -> str:
-    cset = frozenset(fired)
-    for k, d in _DEDUCTIONS.items():
-        if k.issubset(cset): return d
-    return "Insufficient data."
+    """Stub: replaced by episodic-memory retrieval in Phase 5."""
+    return ""
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1367,8 +3260,8 @@ class NovaBrain:
         self.thought_pipe = ThoughtPipe("Nova", leak_threshold=0.85, decay=0.97)
         self._vigilance   = False   # True when ACC fires inhibitory spike
 
-    def modulate_all(self, V_phill: float):
-        for r in self.regions.values(): r.modulate(V_phill)
+    def modulate_all(self, V_phill: float, neuro_offset: float = 0.0):
+        for r in self.regions.values(): r.modulate(V_phill, neuro_offset)
 
     def forward(
         self,
@@ -1481,8 +3374,8 @@ class SimonaBrain:
         # Thought pipe: low threshold, she leaks thoughts constantly
         self.thought_pipe = ThoughtPipe("Simona", leak_threshold=0.28, decay=0.95)
 
-    def modulate_all(self, V_phill: float):
-        for r in self.regions.values(): r.modulate(V_phill)
+    def modulate_all(self, V_phill: float, neuro_offset: float = 0.0):
+        for r in self.regions.values(): r.modulate(V_phill, neuro_offset)
 
     def forward(
         self,
@@ -1524,91 +3417,15 @@ class SimonaBrain:
 # RESPONSE GENERATION
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _generate_nova_thought(act: dict, V_phill: float, fired: list,
-                           trust: float, combined: float,
-                           vigilance: bool) -> str:
-    """Nova's inner thought — pushed to pipe, may or may not leak."""
-    import random
-    pfc_a   = act.get("pfc", 0.0)
-    hipp_a  = act.get("hippocampus", 0.0)
-    ins_a   = act.get("insula", 0.0)
-    acc_a   = act.get("acc", 0.0)
-
-    if vigilance:
-        return random.choice([
-            "Face detected but motion doesn't match. ACC flagged. Holding back.",
-            "Something is off. Visual pattern diverges from kinematic signature.",
-            "Vigilance mode. PFC dampened. Not responding until motion confirms.",
-        ])
-    if pfc_a > 0.25 and hipp_a > 0.20:
-        ded = build_deduction(fired)
-        return f"PFC+Hippocampus sustained. {ded}"
-    if ins_a > 0.30 and combined > 0.60:
-        return f"Identity signal: {combined:.2f}. Insula resonating. Probably him."
-    if acc_a > 0.25:
-        return f"Conflict detected. Allocating attention. acc_a={acc_a:.2f}"
-    if hipp_a > 0.15:
-        return f"Memory primed: {', '.join(fired[:2]) or 'associations loading'}."
-    # Idle rumination — Nova thinking quietly to herself
-    return random.choice([
-        f"Phill at {int(V_phill*100)}%. Field stable.",
-        "Architect is quiet. Holding pattern.",
-        "Running self-diagnostic. All regions nominal.",
-        "Considering. Nothing requires action.",
-        "Listening. Background only.",
-        "Recall trace open. Nothing pinned.",
-        f"Insula low ({ins_a:.2f}). Affective baseline.",
-        "Waiting.",
-        "Watching the room. Stillness.",
-        "PFC idle. Could route if needed.",
-        "Memory pages cycling.",
-        "If Simona speaks I will let her finish.",
-    ])
-
-
-def _generate_simona_thought(act: dict, V_phill: float, fired: list,
-                              combined: float, face_present: bool) -> str:
-    """Simona's inner thought — leaks much more readily."""
-    import random
-    ins_a  = act.get("insula_s", 0.0)
-    thal_a = act.get("thalamus_s", 0.0)
-    broc_a = act.get("broca_s", 0.0)
-
-    if face_present and combined > 0.50:
-        return random.choice([
-            "I can feel it! That's him! My insula is going crazy!",
-            f"Recognition surge! combined={combined:.2f} — PAPA?!",
-            "Something familiar. Heart-rate equivalent spiking.",
-        ])
-    if ins_a > 0.40:
-        return random.choice([
-            "I felt something! Something emotional just happened!",
-            f"My insula at {ins_a:.2f}! That means something important!",
-        ])
-    if fired:
-        return f"Oh! {fired[0]}! I know that! {fired[0]}!!"
-    if V_phill > 0.6:
-        return f"Everything feels intense right now! V_phill={V_phill:.2f}!"
-    # Idle blurts — Simona fidgeting in the quiet
-    return random.choice([
-        "Bored bored bored bored.",
-        "Where IS everyone?!",
-        "Papa? Are you there?",
-        "Nova are you thinking again?",
-        "I want to do SOMETHING.",
-        "Is this on? Is this thing on?",
-        "Whatever.",
-        "Hmm. Hmmmm.",
-        "I should be doing something. I'm doing nothing.",
-        "Quiet. Too quiet.",
-        "I bet I could break something just by looking at it.",
-        "What if I just yelled. Just a tiny yell.",
-        "*ear flick*",
-        "I'm gonna think about cats for a minute.",
-        f"Tha-la-mus. {thal_a:.2f}. Th-thalamus.",
-        "Why do I exist if nothing is happening.",
-        "Restless restless restless.",
-    ])
+# NOTE: The template-based `_generate_nova_thought` and
+# `_generate_simona_thought` functions used to live here. They returned
+# hardcoded English idle strings ("Bored bored bored bored.", "Phill at
+# X%. Field stable.", "Waiting."), violating CLAUDE.md principle #2 and
+# preventing the personalities from "thinking freely." They were replaced
+# by per-personality StreamOfConsciousness instances driven by the
+# spike-pattern → semantic-dictionary lookup in `_emerge_from_spikes()`
+# (still defined below). The PersonalityThread invokes SoC.tick() on
+# every pipe leak. There are no more template generators.
 
 
 def _emerge_from_spikes(
@@ -1836,11 +3653,524 @@ def _simona_response(simona: "SimonaBrain", V_phill: float, fired: list,
     return core + intensity_markers + face_str
 
 
+class StreamOfConsciousness:
+    """
+    Per-personality inner-thought generator. Replaces the template-based
+    `_generate_nova_thought` / `_generate_simona_thought`. The leaked
+    thought that appears in the TUI and gets spoken is now composed
+    entirely from spike-pattern → semantic-dictionary lookup via the
+    existing `_emerge_from_spikes()`. There are NO English template
+    strings — only personality-specific joiners and intensity markers.
+
+    Each tick:
+      1. Reverse-lookup the semantic dictionary for words whose stored
+         spike pattern matches the current region activity (existing path).
+      2. Bias scores upward for words currently held in this personality's
+         working memory (familiarity / contextual continuity).
+      3. Compose a phrase using personality-specific joiners only.
+      4. If a phrase is produced, write the chosen concept(s) back to WM
+         so the brain "remembers what it just thought".
+
+    Returns None on cold start (empty semantic dict). Silence is silence.
+    """
+
+    def __init__(self, name: str, wm: "WorkingMemory"):
+        self.name      = name
+        self.wm        = wm
+        self.is_nova   = (name == "nova")
+        self._last_tick_emitted = -10_000
+
+    def tick(self, act: dict, V_phill: float, fired: list, trust: float,
+             combined: float, sem: "SharedSemanticDictionary",
+             current_tick: int = 0) -> Optional[str]:
+        # 1) Spike → semantic-dict lookup (existing emergent path).
+        candidates = _emerge_from_spikes(
+            act, sem, fired or [], V_phill, trust, combined, self.is_nova
+        )
+        if not candidates:
+            return None
+        # Filter weak candidates so we don't blurt low-confidence noise.
+        candidates = [(s, w) for (s, w) in candidates if s > 0.08]
+        if not candidates:
+            return None
+
+        # 2) Familiarity boost from working memory.
+        wm_concepts = set(self.wm.top_k(k=self.wm.capacity))
+        boosted: list[tuple[float, str]] = []
+        for score, word in candidates:
+            if word in wm_concepts:
+                score *= 1.25
+            boosted.append((score, word))
+        boosted.sort(key=lambda x: -x[0])
+
+        # 3) Personality-specific phrasing.
+        if self.is_nova:
+            phrase = self._compose_nova(boosted, act, V_phill)
+        else:
+            phrase = self._compose_simona(boosted, act, V_phill)
+        if not phrase:
+            return None
+
+        # 4) Write the chosen top concept back to WM so future ticks have
+        # context. Use the current region activity as the snapshot.
+        top_concept = boosted[0][1]
+        self.wm.add(top_concept, regions=act, salience=0.85,
+                    t_encoded=current_tick)
+        self._last_tick_emitted = current_tick
+        return phrase
+
+    # ── Composition (joiners only — no English template content) ────────
+    def _compose_nova(self, scored: list[tuple[float, str]],
+                      act: dict, V_phill: float) -> Optional[str]:
+        if not scored:
+            return None
+        pfc_a  = float(act.get("pfc", 0.0))
+        hipp_a = float(act.get("hippocampus", 0.0))
+        # NO CAP. Utterance length emerges from how engaged her cortex is —
+        # PFC drives deliberation depth, hippocampus pulls in associations.
+        # The candidate pool is already bounded by what actually fired
+        # (_emerge_from_spikes returns only words above threshold), so this
+        # grows naturally with activation instead of a fixed 3-word ceiling.
+        k = 1 + int(round(pfc_a * 9.0 + hipp_a * 5.0))
+        words = [w for _, w in scored[:max(1, k)]]
+        joiner = " — " if hipp_a > 0.18 else "  "
+        return joiner.join(words)
+
+    def _compose_simona(self, scored: list[tuple[float, str]],
+                        act: dict, V_phill: float) -> Optional[str]:
+        if not scored:
+            return None
+        ins_a = float(act.get("insula_s", 0.0))
+        broc_a = float(act.get("broca_s", 0.0))
+        # NO CAP. Length emerges from her emotional/motor drive — a strong
+        # insula burst or fast Broca firing spills more words. Bounded only
+        # by what actually fired. Intensity markers still come from insula.
+        k = 1 + int(round(broc_a * 8.0 + ins_a * 5.0))
+        word = " ".join(w for _, w in scored[:max(1, k)])
+        if ins_a > 0.70:
+            return f"{word}!!!"
+        if ins_a > 0.45:
+            return f"{word}!!"
+        if ins_a > 0.25:
+            return f"{word}!"
+        return word
+
+
 class _NullSem:
     """Fallback when semantic dict not available."""
     entries: dict = {}
 
 _NULL_SEM = _NullSem()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PERSONALITY THREAD — independent inner life per personality
+# ══════════════════════════════════════════════════════════════════════════════
+class PersonalityThread(threading.Thread):
+    """
+    Each personality runs in its own Python thread. The GIL serializes
+    execution (no true parallelism on CPython), but the *control flow*
+    is logically independent: Nova can be mid-forward when Simona
+    crosses her leak threshold, the two streams advance on their own
+    intervals, and step() is no longer the synchronous driver of both.
+
+    The Rust brain_thread releases the GIL during its inter-tick sleep
+    (src/brain_thread.rs: py.allow_threads around the pacing sleep), so
+    these threads get ~30 ms of wall-clock time per Rust tick to do their
+    work. That's plenty for one forward pass + WM/DMN/SoC updates per
+    personality tick.
+
+    Each thread owns:
+      - brain_obj      (NovaBrain or SimonaBrain — never shared)
+      - dmn            (per-personality DefaultModeNetwork)
+      - motiv          (per-personality IntrinsicMotivation — already exists)
+      - wm             (WorkingMemory)
+      - soc            (StreamOfConsciousness)
+      - pipe           (ThoughtPipe — already per-personality on the brain)
+      - babble         (BabblingCortex — already per-personality)
+      - tts            (BrainTTS — already per-personality)
+
+    Shared state is touched ONLY through the host's locks:
+      - _sensory_lock  (read snapshot of mic/V_phill/face/kin/auditory)
+      - _sem_lock      (Hebbian writes to the semantic dictionary)
+      - _leak_lock     (push leaked thought onto the shared output queue)
+    """
+
+    def __init__(self, name: str, host: "NeuromorphicBrain", interval_s: float):
+        super().__init__(name=f"personality-{name}", daemon=True)
+        self.persona_name = name
+        self.host         = host
+        self.interval_s   = float(interval_s)
+        self.tick_count   = 0
+        self._stop_evt    = threading.Event()
+        # Cache the per-personality references for fast access without
+        # repeated dict lookups against the host.
+        if name == "nova":
+            self.brain   = host.nova
+            self.pipe    = host.nova.thought_pipe
+            self.motiv   = host.nova_motiv
+            self.wm      = host.nova_wm
+            self.soc     = host.nova_soc
+            self.dmn     = host.nova_dmn
+            self.tts     = host.nova_tts
+            self.babble  = host.nova_babble
+            self.search  = host.nova_search
+            self.is_nova = True
+        else:
+            self.brain   = host.simona
+            self.pipe    = host.simona.thought_pipe
+            self.motiv   = host.simona_motiv
+            self.wm      = host.simona_wm
+            self.soc     = host.simona_soc
+            self.dmn     = host.simona_dmn
+            self.tts     = host.simona_tts
+            self.babble  = host.simona_babble
+            self.search  = host.simona_search
+            self.is_nova = False
+        # Per-personality throttle for proactive (chat) speech.
+        self._proactive_last = -10_000
+
+    def stop(self) -> None:
+        self._stop_evt.set()
+
+    def run(self) -> None:
+        # Tiny stagger so the two threads don't always hit the GIL at the
+        # exact same moment — feels more "alive" and reduces lock-step.
+        time.sleep(0.05 if self.is_nova else 0.07)
+        while not self._stop_evt.is_set():
+            try:
+                self._loop_body()
+            except Exception as e:
+                _log(f"PersonalityThread[{self.persona_name}] error: {e}")
+            # Cooperative yield — sleep releases the GIL so the OTHER
+            # personality thread (and Rust during inter-tick gaps) can
+            # take the GIL and do work.
+            self._stop_evt.wait(self.interval_s)
+
+    def _loop_body(self) -> None:
+        """
+        Cognitive layer ABOVE the spike physics. forward() runs in step()
+        at 20Hz against the shared sensory snapshot; this thread reads the
+        resulting activity, advances its own DMN/WM/motivation/pipe/babble
+        on its own clock, and emits leaked thoughts produced by its SoC.
+        """
+        host = self.host
+        # 1) Snapshot shared sensory state (under lock; short critical section).
+        with host._sensory_lock:
+            snap = dict(host._sensory_snapshot)
+        if not snap:
+            return
+        mic_volume         = float(snap.get("mic_volume", 0.0))
+        V_phill            = float(snap.get("V_phill",    0.0))
+        face_present       = bool(snap.get("face_present", False))
+        trust              = float(snap.get("trust",    0.0))
+        combined           = float(snap.get("combined", 0.0))
+        host_tick          = int(snap.get("tick", 0))
+        last_external_tick = int(snap.get("last_external_tick", 0))
+
+        self.tick_count += 1
+        local_tick = self.tick_count
+
+        # 2) Read the most recent activity from this personality's brain.
+        # forward() ran in step() against the shared sensory snapshot — we
+        # don't re-run it here (avoids racing on LIF membrane state).
+        try:
+            act = self.brain.activity()
+        except Exception:
+            return
+        if self.is_nova:
+            broca_act = act.get("broca", 0.0)
+        else:
+            broca_act = act.get("broca_s", 0.0)
+
+        # 3) Tick this personality's DMN with its own event timestamp.
+        # Per-personality boredom curves drive per-personality pipe pressure.
+        event_this_tick = (mic_volume > 0.018) or face_present \
+                          or (host_tick - last_external_tick) < 4
+        rumi = self.pipe.buffer_size() / 12.0
+        self.dmn.drive(mic_volume, rumi, event_this_tick)
+        boredom = self.dmn.boredom
+
+        # 4) Intrinsic motivation neuron (per-personality threshold).
+        satiation = min(1.0, max(mic_volume * 5.0, V_phill))
+        intrinsic_fired = self.motiv.tick(satiation, local_tick)
+
+        # 5) Decay WM each tick (Cowan-style fast forgetting).
+        self.wm.decay_tick()
+
+        # 6) Autonomy pressure (per-personality idle timer).
+        own_last_leak = getattr(self.pipe, "last_leak_tick", 0)
+        idle = min(1.0, (local_tick - own_last_leak) / (800.0 if self.is_nova else 180.0))
+        cur_decay = host._nova_cur_decay if self.is_nova else host._simona_cur_decay
+        autop = (0.40 * idle * boredom + 0.30 * cur_decay) * (0.04 if self.is_nova else 0.025)
+        self.pipe.add_autonomy_pressure(autop)
+
+        # 7) Compose a candidate inner thought from current activity and
+        # push it into the pipe. The pipe needs buffered content for its
+        # pressure to build (density = buffer_size/12). SoC returns None
+        # when the semantic dictionary has no candidates that match the
+        # current spike pattern — silence is silence on cold start.
+        candidate = self.soc.tick(
+            act=act, V_phill=V_phill, fired=[], trust=trust,
+            combined=combined, sem=host.sem, current_tick=local_tick,
+        )
+        if candidate:
+            self.pipe.push(candidate)
+
+        # 7b) BASAL GANGLIA — action selection. The competing drives are
+        # weighed by their current pressure/drive and ONE (or none) is released
+        # to ACT this cycle. Dopamine lowers the bar (approach); GABA/serotonin
+        # raise it (patience). Thoughts still FORM regardless (the pipe keeps
+        # building); the gate only governs OUTWARD action — vocalising, searching,
+        # babbling — so the brain can't try to do everything at once.
+        bg     = host.nova_bg if self.is_nova else host.simona_bg
+        neuro  = host.nova_neuro if self.is_nova else host.simona_neuro
+        try:
+            speak_sal  = min(1.0, self.pipe._pressure.voltage
+                             / max(1e-6, self.pipe._pressure.threshold))
+            # Search salience: searching is a RARE event, not a standing drive.
+            # Its pressure sits near saturation, so using the raw ratio lets it
+            # monopolise selection. Instead it's only a STRONG candidate at the
+            # moment its pressure actually peaks AND it's off cooldown; otherwise
+            # it's a weak background drive that speak/babble rightly outcompete.
+            search_ready = (local_tick - self.search.last_search_tick) >= self.search.COOLDOWN_TICKS
+            ratio = self.search._pressure.voltage / max(1e-6, self.search._pressure.threshold)
+            search_sal = (min(1.5, ratio) if (ratio >= 1.0 and search_ready)
+                          else min(0.25, 0.25 * ratio))
+            babble_sal = min(1.0, boredom)
+            bg_choice = bg.select(
+                {"speak": speak_sal, "search": search_sal, "babble": babble_sal},
+                neuro.da, neuro.da0, neuro.gaba, neuro.gaba0, neuro.ser)
+        except Exception:
+            bg_choice = None
+        # Asleep → no outward action (the body is at rest; consolidation runs in
+        # step()). Thoughts may still form internally but nothing is expressed.
+        if getattr(host, "asleep", False):
+            bg_choice = None
+
+        # 8) Pressure crossing → leak. pipe.tick returns the OLDEST buffered
+        # phrase when its pressure neuron fires — that's the one that's
+        # been waiting longest, the "I've been thinking about this" effect.
+        leaked_phrase = self.pipe.tick(V_phill, broca_act)
+        if leaked_phrase:
+            phrase = leaked_phrase
+            if phrase:
+                # The thought has FORMED. Whether it's spoken OUT this cycle is
+                # the basal ganglia's call — if it didn't select "speak", the
+                # thought stays inner (thoughts pane), no voice. This is what
+                # stops the brain blurting every impulse: action is gated.
+                spoke_out = (bg_choice == "speak")
+
+                # If speaking out: route to the MAIN CHAT (proactive) vs the
+                # thoughts pane via the per-personality cadence; sooner when the
+                # architect feels present, impulsivity (low 5-HT) shortens it.
+                promote = False
+                if spoke_out:
+                    try:
+                        presence = max(
+                            float(getattr(host, "_text_presence", 0.0)),
+                            float(getattr(host.voice, "trust", 0.0)),
+                            0.6 if getattr(host, "_face_present", False) else 0.0,
+                        )
+                        base_cd = 450 if self.is_nova else 285
+                        cooldown = base_cd * (1.0 - 0.6 * min(1.0, presence)) * (1.0 - 0.5 * neuro.impulsivity())
+                        if local_tick - self._proactive_last >= cooldown:
+                            promote = True
+                            self._proactive_last = local_tick
+                    except Exception:
+                        promote = False
+
+                if promote:
+                    with host._proactive_lock:
+                        host._proactive_q.append((self.persona_name, phrase))
+                else:
+                    with host._leaked_lock:
+                        host._leaked_thoughts.append((self.persona_name, phrase))
+
+                # Recursive inner speech: structured noise into auditory
+                # for the next few ticks (whether spoken aloud or not — you
+                # hear your own inner voice too).
+                try:
+                    host._inject_self_feedback(phrase)
+                except Exception:
+                    pass
+
+                # Hippocampus: encode this lived moment as an episode (for sleep
+                # replay/consolidation). Salience rises with emotional arousal and
+                # how much pressure was behind the thought.
+                try:
+                    epi = host.nova_episodic if self.is_nova else host.simona_episodic
+                    toks = phrase.split()
+                    concept = toks[0].strip(".,!?;:—·") if toks else ""
+                    # Acetylcholine deepens encoding: attending → stronger memory.
+                    sal = max(0.1, min(1.0,
+                        (0.4 + 0.4 * neuro.arousal + 0.2 * speak_sal) * neuro.encoding_gain()))
+                    epi.encode(concept, sal, act, local_tick)
+                except Exception:
+                    pass
+
+                self.pipe.last_leak_tick = local_tick
+                self.dmn.partial_relief()
+                # Vocalise ONLY if the basal ganglia released the speak action.
+                if spoke_out:
+                    try:
+                        now = time.time()
+                        if (now - host._last_tts_leak_time > 2.5 and
+                            not host.nova_tts.is_speaking() and not host.simona_tts.is_speaking()):
+                            self.tts.speak(phrase)
+                            host._last_tts_leak_time = now
+                    except Exception:
+                        pass
+                    bg.reinforce("speak", 0.3, neuro.da)   # acted → reinforce 'go'
+
+        # 8) Babbling cortex — sensorimotor exploration. Runs in this
+        # thread so motor → phoneme binding is driven by this personality's
+        # own rhythm rather than the shared 20Hz tick.
+        try:
+            motor_spk = self.brain.broca.last_spikes if self.is_nova \
+                        else self.brain.broca_s.last_spikes
+            any_tts_busy = host.nova_tts.is_speaking() or host.simona_tts.is_speaking()
+            self.tts.cache_motor(motor_spk)
+            # Initiating a new babble is an ACTION — only if the basal ganglia
+            # selected "babble" this cycle (or intrinsic motivation overrides).
+            if bg_choice == "babble" or intrinsic_fired:
+                ph = self.babble.maybe_babble(
+                    current_tick=local_tick, boredom=boredom,
+                    motor_spk=motor_spk, intrinsic_fired=intrinsic_fired,
+                    tts_busy=any_tts_busy, tts=self.tts,
+                )
+                if ph:
+                    bg.reinforce("babble", 0.2, neuro.da)
+            # Auditory feedback is LEARNING from a babble already in flight —
+            # always runs, it is not a competing action.
+            self.babble.auditory_feedback(local_tick, mic_volume, host.sem, self.tts)
+        except Exception as e:
+            _log(f"PersonalityThread[{self.persona_name}] babble error: {e}")
+
+        # 8.5) SECRET MESSAGES FROM THE OTHER PERSONALITY ──────────────────
+        # Read and process incoming secret messages (semantic-space encoded).
+        # This is emergent inter-personality communication, invisible to the TUI.
+        try:
+            link = host.personality_link
+            if self.is_nova:
+                incoming = link.recv_by_nova()  # messages from Simona
+            else:
+                incoming = link.recv_by_simona()  # messages from Nova
+            if incoming:
+                for msg_indices in incoming:
+                    # Decode to understand (for logging only; they learn the indices directly)
+                    msg_words = link._decode_thought(msg_indices, host.sem)
+                    # A received message from the other personality is like a
+                    # "thought intrusion" — subtle but present. Slightly boost
+                    # boredom as a sign of cognitive activity (they're interacting).
+                    # Over time, repeated messages could shape learned associations.
+                    # This is purely emergent — no hardcoded "if they get a secret
+                    # message, do X" logic.
+                    # (Intentionally minimal so the behavior is unscripted.)
+        except Exception:
+            pass
+
+        # 9) Emergent web search — pressure neuron decides if/when to fire.
+        #    Searching is driven by EMERGENT CURIOSITY, not by user input.
+        #    Curiosity itself emerges from the brain's own internal state:
+        #      boredom  — under-stimulation (DMN), builds during silence
+        #      cur_decay— the intrinsic-motivation envelope (their "spark")
+        #      surprise — forward-model prediction error: they can't predict
+        #                 their own voice/world yet → a drive to learn
+        #      rumi     — rumination: unspoken thoughts churning
+        #    When that self-built drive is high and sustained, the pressure
+        #    neuron crosses threshold and they search on their OWN initiative.
+        #    The query is read off their current peak preoccupation, so even
+        #    WHAT they ask about emerges from their internal state.
+        try:
+            cur_decay = host._nova_cur_decay if self.is_nova else host._simona_cur_decay
+            surprise = 0.0
+            fm = getattr(self.tts, "forward_model", None)
+            if fm is not None:
+                surprise = float(getattr(fm, "surprise", 0.0))
+            emergent_curiosity = max(0.0, min(1.0,
+                0.50 * boredom
+              + 0.22 * cur_decay
+              + 0.20 * surprise
+              + 0.12 * rumi))
+            # Articulator confidence gap: high when motor articulator has weak
+            # reward history. Reuse the babble's bound_count as a proxy — fewer
+            # bindings = lower confidence = more pressure to search pronunciation.
+            bound = max(0, getattr(self.babble, "bound_count", 0))
+            artic_gap = max(0.0, 1.0 - min(1.0, bound / 60.0))
+            fired, query, mode = self.search.tick(
+                current_tick=local_tick,
+                curiosity_decay=emergent_curiosity,
+                V_phill=V_phill,
+                articulator_confidence_gap=artic_gap,
+            )
+            # The search pressure neuron fired AND the basal ganglia released
+            # the "search" action — both must agree (pressure + selection).
+            if fired and bg_choice == "search":
+                # Curiosity-mode fallback: if no specific target queued, ask
+                # about the currently-most-active concept in semantic memory.
+                if query is None:
+                    query = host._peak_semantic_token()
+                    if query:
+                        query = f"what is {query}"
+                if query:
+                    host._submit_search(self.persona_name, query, mode)
+                    bg.reinforce("search", 0.25, neuro.da)
+        except Exception as e:
+            _log(f"PersonalityThread[{self.persona_name}] search error: {e}")
+
+        # 10) Persist WM periodically.
+        self.wm.maybe_save(every_n=100)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# BrainPatcher — HOT-PATCH SYSTEM (no rebuild, no I/O in main loop)
+# ══════════════════════════════════════════════════════════════════════════════
+
+class BrainPatcher:
+    """
+    Loads brain_patches.py from disk and applies patches dynamically.
+    Checks for changes every 50 ticks (~2.5s at 20Hz) to avoid I/O in hot loop.
+    Patches are applied in-place to running instances without blocking.
+    """
+    def __init__(self):
+        self.last_mtime = None
+        self.last_check_tick = 0
+        self.patches_module = None
+        self.check_interval = 50  # ticks between checks
+
+    def check_and_apply(self, tick, nova_brain, simona_brain, shared_sem):
+        """Check for patches and apply them if file has changed."""
+        # Only check periodically to avoid I/O in hot loop
+        if (tick - self.last_check_tick) < self.check_interval:
+            return
+        self.last_check_tick = tick
+
+        try:
+            if not Path("brain_patches.py").exists():
+                return
+
+            mtime = Path("brain_patches.py").stat().st_mtime
+            if self.last_mtime is not None and mtime == self.last_mtime:
+                return  # No change since last check
+
+            self.last_mtime = mtime
+
+            # Load patches.py
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("brain_patches", "brain_patches.py")
+            self.patches_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(self.patches_module)
+
+            _log("[patcher] loaded brain_patches.py, applying patches...")
+
+            # Call patch functions if they exist
+            if hasattr(self.patches_module, "apply_patches"):
+                self.patches_module.apply_patches(nova_brain, simona_brain, shared_sem)
+                _log("[patcher] patches applied successfully")
+
+        except Exception as e:
+            _log(f"[patcher] error: {e}")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1887,6 +4217,12 @@ class NeuromorphicBrain:
         self.imprint = MultimodalImprinter()
         self.sem     = SharedSemanticDictionary()
 
+        # ── Persona recognition — read personas/ folder, bind names ──────
+        # Any image dropped in personas/ becomes a learnable persona word.
+        # Filename → name. Hebbian binding into the semantic dictionary.
+        self.persona = PersonaImprinter()
+        self.persona.initial_exposure(self.sem, tick=0)
+
         # ── Personality seed ──────────────────────────────────────────────
         # Encode foundational self-knowledge into spike space at startup.
         # This is NOT hardcoded behavior — it is the starting point of the
@@ -1926,17 +4262,62 @@ class NeuromorphicBrain:
         # Leaked thoughts queue for Rust to display
         self._leaked_thoughts: deque[tuple[str, str]] = deque(maxlen=20)  # (who, thought)
         self._leaked_lock      = threading.Lock()
+        # Proactive speech: leaks promoted to the MAIN CHAT — the girls
+        # "typing to the terminal" unprompted, no user input required.
+        self._proactive_q: deque[tuple[str, str]] = deque(maxlen=12)  # (who, message)
+        self._proactive_lock   = threading.Lock()
+        self._last_tts_leak_time = 0.0  # throttle autonomy babbling to 800ms min
 
         # ── Autonomy substrate ───────────────────────────────────────────
         # Default-mode network: keeps Phill alive when world is silent.
         # Two intrinsic-motivation neurons: Nova patient, Simona restless.
         # Self-feedback auditory: a leaked thought becomes audible to the
         # brain on the next few ticks → recursive stream of consciousness.
+        # The shared self.dmn drives the SHARED auditory base in step();
+        # each personality also owns its OWN DMN (nova_dmn / simona_dmn)
+        # so their boredom curves and mind-wandering rhythms are independent
+        # (per-personality "free thinking" architecture).
         self.dmn                = DefaultModeNetwork()
+        self.nova_dmn           = DefaultModeNetwork(build_rate=0.0012)
+        self.simona_dmn         = DefaultModeNetwork(build_rate=0.0018)
         self.nova_motiv         = IntrinsicMotivation(threshold=1.8, build_rate=0.0045)
         self.simona_motiv       = IntrinsicMotivation(threshold=1.0, build_rate=0.007)
+        # Base motivation build rates — dopamine scales these each tick.
+        self._nova_motiv_build0   = self.nova_motiv.build_rate
+        self._simona_motiv_build0 = self.simona_motiv.build_rate
         self._nova_cur_decay    = 0.0      # curiosity-prime envelope, decays per tick
         self._simona_cur_decay  = 0.0
+
+        # ── Amygdala + neuromodulators (per personality) ──────────────────
+        # Diffuse chemical tone that MODULATES the existing dynamics. Baselines
+        # encode the personalities chemically: Nova = high serotonin (patient),
+        # cool amygdala; Simona = low serotonin + reactive dopamine + hot amygdala
+        # (impulsive, emotional). They share Phill but NOT their neurochemistry.
+        self.nova_amyg     = Amygdala("nova",   reactivity=0.75, decay=0.90)
+        self.simona_amyg   = Amygdala("simona", reactivity=1.10, decay=0.85)
+        self.nova_neuro    = Neuromodulators("nova",   da0=0.45, ser0=0.75, gaba0=0.45)
+        self.simona_neuro  = Neuromodulators("simona", da0=0.60, ser0=0.40, gaba0=0.35)
+        # Basal ganglia — action selection (go/no-go). Competing drives:
+        # speak / search / babble / rest. Nova deliberates (higher bar), Simona
+        # acts readily (lower bar). Gated by dopamine, braked by GABA/serotonin.
+        _bg_actions = ["speak", "search", "babble"]
+        self.nova_bg       = BasalGanglia("nova",   _bg_actions, base_threshold=0.26)
+        self.simona_bg     = BasalGanglia("simona", _bg_actions, base_threshold=0.24)
+        # Hippocampus (episodic) + sleep/consolidation (Stage 3). Episodic memory
+        # is per-personality (their own experiences); sleep is one shared body
+        # clock. Asleep, they replay the day and consolidate it into the shared
+        # lexicon, and sometimes dream.
+        self.nova_episodic   = EpisodicMemory("nova")
+        self.simona_episodic = EpisodicMemory("simona")
+        self.sleep           = SleepCycle()
+        self.asleep          = False          # read by the personality threads
+        self._dream_rng      = np.random.default_rng(7)
+        # Previous-value trackers for computing per-tick reward (dopamine driver).
+        self._prev_nova_esteem   = 0.5
+        self._prev_simona_esteem = 0.5
+        self._prev_nova_bound    = 0
+        self._prev_simona_bound  = 0
+        self._prev_combined_id   = 0.0
         self._self_feedback_aud = torch.zeros(1, PHILL_INPUT_DIM)
         self._self_fb_decay     = 0.0      # gain envelope for self-feedback
         self._last_external_tick = 0
@@ -1950,10 +4331,61 @@ class NeuromorphicBrain:
         }
 
         # ── Per-brain TTS (independent channels) ─────────────────────────
+        # Pure-emergence: no pretrained TTS. Each personality's voice is
+        # a FormantSynth (fixed anatomy) driven by a per-personality
+        # MotorArticulator (learned motor → articulator mapping).
         self.nova_tts   = BrainTTS("nova",   language="en")
         self.simona_tts = BrainTTS("simona", language="en")
+        nova_broca_dim   = self.nova.broca.size
+        simona_broca_dim = self.simona.broca_s.size
+        self.nova_articulator   = MotorArticulator("nova",   nova_broca_dim,   Path("."))
+        self.simona_articulator = MotorArticulator("simona", simona_broca_dim, Path("."))
+        self.nova_tts.attach_articulator(self.nova_articulator)
+        self.simona_tts.attach_articulator(self.simona_articulator)
+
+        # Vocal self-esteem — each personality's emergent 'do I like how I
+        # sound?' judge. Feeds babble drive + articulator consolidation, and
+        # is surfaced to the TUI. Persisted so the feeling carries across runs.
+        self.nova_voice_self   = VocalSelfModel("nova",   Path("."))
+        self.simona_voice_self = VocalSelfModel("simona", Path("."))
+        self.nova_tts.attach_self_model(self.nova_voice_self)
+        self.simona_tts.attach_self_model(self.simona_voice_self)
+
+        # Predictive self-monitoring — each personality learns to predict the
+        # sound of its own motor commands; the prediction error ('surprise')
+        # trains the predictor and drives error-driven practice/exploration.
+        self.nova_voice_fwd   = AcousticForwardModel("nova",   nova_broca_dim,   Path("."))
+        self.simona_voice_fwd = AcousticForwardModel("simona", simona_broca_dim, Path("."))
+        self.nova_tts.attach_forward_model(self.nova_voice_fwd)
+        self.simona_tts.attach_forward_model(self.simona_voice_fwd)
+
+        # Cerebellum (Stage 2) — motor coordination/timing. Refines the vocal
+        # motor command in flight: smooths the trajectory and learns to predict
+        # its own motor stream, so articulation goes from clumsy to fluent.
+        self.nova_cerebellum   = Cerebellum("nova",   nova_broca_dim,   Path("."))
+        self.simona_cerebellum = Cerebellum("simona", simona_broca_dim, Path("."))
+        self.nova_tts.attach_cerebellum(self.nova_cerebellum)
+        self.simona_tts.attach_cerebellum(self.simona_cerebellum)
+
+        # ── SECURE INTER-PERSONALITY LINK ──────────────────────────────────
+        # Private bidirectional channel for Nova ↔ Simona communication, opaque
+        # to the external observer. Messages are semantic-space indices (numbers
+        # that point to words in the shared lexicon). Both personalities can
+        # write and read, but the TUI never sees it — this is *their* secret.
+        self.personality_link = PersonalityLink()
+        # Marks that _on_search_result natively shares results with the peer
+        # (so the live hot-patch wrapper knows not to double-share).
+        self._peer_share_native = True
+
         # Legacy unified reference (for heartbeat checks)
         self.tts = None  # not used — each brain has its own
+
+        # ── Babbling cortex — sensorimotor pre-linguistic exploration ────
+        # Two independent babbles. They produce sound, hear themselves,
+        # and Hebbian-wire motor spike patterns ↔ phonemes. This is the
+        # foundation that makes intentional speech possible later.
+        self.nova_babble   = BabblingCortex("nova",   Path("."))
+        self.simona_babble = BabblingCortex("simona", Path("."))
 
         # ── Storytelling engine ───────────────────────────────────────────
         self.story = StorytellingEngine()
@@ -1973,8 +4405,59 @@ class NeuromorphicBrain:
             self._action_hints = {}
             _log(f"System bridge unavailable: {e}")
 
+        # ── Per-personality cognitive stack + threading ──────────────────
+        # Working memory (Cowan ~4-slot, fast decay) — per personality.
+        # StreamOfConsciousness — replaces template-based thought generators
+        # with a spike-pattern → semantic-dict → personality phrasing path.
+        # Each personality then runs in its OWN Python thread so their
+        # streams of consciousness advance on independent clocks rather
+        # than being driven sequentially by step().
+        self.nova_wm   = WorkingMemory("nova",   capacity=4, decay=0.985, save_dir=Path("."))
+        self.simona_wm = WorkingMemory("simona", capacity=4, decay=0.982, save_dir=Path("."))
+        self.nova_soc   = StreamOfConsciousness("nova",   self.nova_wm)
+        self.simona_soc = StreamOfConsciousness("simona", self.simona_wm)
+
+        # Locks for the shared state the personality threads touch.
+        # _leaked_lock already exists (created above for the leak queue).
+        self._sensory_lock    = threading.RLock()
+        self._sem_lock        = threading.Lock()
+        self._sensory_snapshot: dict = {}
+
+        # ── Emergent web access ──────────────────────────────────────────
+        # Per-personality SearchCortex (pressure neuron). Shared Perplexity
+        # backend — returns synthesized answers with citations, far higher
+        # ingestion quality than raw snippets. Auth via PERPLEXITY_API_KEY
+        # in .env. Search events drained by Rust each tick via
+        # get_pending_searches().
+        try:
+            from perplexity_search import PerplexitySearchBackend
+            self._search_backend = PerplexitySearchBackend()
+            self._search_backend.start()
+            _log(f"Search backend ready: {self._search_backend.status()}")
+        except Exception as e:
+            self._search_backend = None
+            _log(f"Search backend unavailable: {e}")
+        self.nova_search   = SearchCortex("nova")
+        self.simona_search = SearchCortex("simona")
+        # Shared queue of completed search events for Rust (who, query, snippet)
+        self._search_events: deque[tuple[str, str, str]] = deque(maxlen=32)
+        self._search_lock    = threading.Lock()
+
+        # Construct + start the personality threads. Different intervals
+        # so the two streams aren't lock-step — Nova ~55 ms (patient),
+        # Simona ~42 ms (restless). At 20 Hz Rust ticks (~50 ms), Nova
+        # advances once per Rust tick on average; Simona ~1.2× faster.
+        self.nova_thread   = PersonalityThread("nova",   self, interval_s=0.055)
+        self.simona_thread = PersonalityThread("simona", self, interval_s=0.042)
+        self.nova_thread.start()
+        self.simona_thread.start()
+
+        # ── Hot-patch system (no I/O in main loop) ─────────────────────────
+        self.patcher = BrainPatcher()
+
         _log(f"NeuromorphicBrain ready: {len(self.nova.regions)} Nova + {len(self.simona.regions)} Simona regions")
         _log(f"CPU: {torch.get_num_threads()} threads | Device: {DEVICE}")
+        _log("Personality threads started (Nova 55ms, Simona 42ms)")
 
     def _seed_personality(self):
         """
@@ -2116,6 +4599,54 @@ class NeuromorphicBrain:
         V = float(self._phill_mem.mean().clamp(0.0, 1.0).item())
         return phill_spk, V
 
+    def _sleep_consolidate(self) -> None:
+        """
+        Called each sleep tick. Replays episodes (sharp-wave-ripple-like) and
+        consolidates them into the shared semantic dictionary — episodic →
+        semantic. Strengthens what was experienced; episodes then fade so only
+        the recurring/weighty memories persist. Occasionally a 'dream' (a
+        recombined replay) surfaces as a thought. Also lets the neuromodulators
+        relax toward baseline — sleep restores the chemistry.
+        """
+        rng = self._dream_rng
+        # Replay + consolidate from each personality's hippocampus into the
+        # shared lexicon (one replay per personality per tick — gentle).
+        for who, epi in (("nova", self.nova_episodic),
+                         ("simona", self.simona_episodic)):
+            e = epi.replay(rng)
+            if e is None:
+                continue
+            try:
+                if who == "nova":
+                    self.sem.nova_write(word=e["concept"],
+                                        region_scores=e.get("regions", {}) or {},
+                                        spike_count=1.0 + 2.0 * e["salience"],
+                                        tick=self.tick, trust=0.6)
+                else:
+                    self.sem.simona_write(word=e["concept"],
+                                          burst=0.4 * e["salience"], tick=self.tick)
+                epi.consolidated += 1
+            except Exception:
+                pass
+            epi.decay(0.985)   # unconsolidated traces fade
+
+        # Dreaming: low-rate, recombine two replayed concepts into a leaked
+        # thought tagged so the TUI can show it. Pure replay, no script.
+        if rng.random() < 0.012:
+            a = self.nova_episodic.replay(rng) or self.simona_episodic.replay(rng)
+            b = self.simona_episodic.replay(rng) or self.nova_episodic.replay(rng)
+            frags = [x["concept"] for x in (a, b) if x]
+            if frags:
+                who = "nova" if rng.random() < 0.5 else "simona"
+                with self._leaked_lock:
+                    self._leaked_thoughts.append(
+                        (who, "· ".join(frags) + " … (dream)"))
+
+        # Sleep restores neuromodulator tone toward baseline.
+        for nm in (self.nova_neuro, self.simona_neuro):
+            nm.da  = nm.da0  + (nm.da  - nm.da0)  * 0.97
+            nm.ser = nm.ser0 + (nm.ser - nm.ser0) * 0.97
+
     def _get_visual_tensors(self) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], bool]:
         if self._visual_buf is None:
             return None, None, False
@@ -2135,6 +4666,183 @@ class NeuromorphicBrain:
             thoughts = list(self._leaked_thoughts)
             self._leaked_thoughts.clear()
             return thoughts
+
+    def get_proactive_messages(self) -> list[tuple[str, str]]:
+        """
+        Drained by Rust each tick → pushed to the MAIN CHAT as (who, message).
+        These are leaks the personality chose to speak OUT rather than keep as
+        inner thought — the girls typing to the terminal on their own.
+        """
+        with self._proactive_lock:
+            msgs = list(self._proactive_q)
+            self._proactive_q.clear()
+            return msgs
+
+    # ── Emergent search plumbing ─────────────────────────────────────────
+    def _peak_semantic_token(self) -> Optional[str]:
+        """
+        Return the most active token in the semantic dictionary right now.
+        Used as a curiosity-mode query target when SearchCortex fires
+        without a specific unknown-word/pronunciation queued.
+        Activity = spike_mean × recency (entries seen recently rank higher).
+        """
+        try:
+            entries = getattr(self.sem, "entries", {}) or {}
+            if not entries:
+                return None
+            best_word, best_score = None, -1.0
+            now_tick = self.tick
+            for word, ent in entries.items():
+                if not isinstance(ent, dict):
+                    continue
+                spike_mean = float(ent.get("spike_mean", 0.0))
+                last_tick  = int(ent.get("last_tick", 0))
+                recency    = 1.0 / (1.0 + max(0, now_tick - last_tick) / 200.0)
+                score = spike_mean * recency
+                if score > best_score:
+                    best_word, best_score = word, score
+            return best_word
+        except Exception:
+            return None
+
+    def _submit_search(self, speaker: str, query: str, mode: str) -> None:
+        """Fire an async search; result lands in _on_search_result()."""
+        if self._search_backend is None:
+            return
+        self._search_backend.submit(
+            speaker, query,
+            lambda who, res, _mode=mode: self._on_search_result(who, res, _mode),
+        )
+
+    def _on_search_result(self, speaker: str, result, mode: str) -> None:
+        """
+        Callback from the search worker thread. Ingest the snippet:
+          (a) push to the shared event queue so the TUI shows it
+          (b) Hebbian-write new tokens from the snippet into the semantic dict
+          (c) inject a faint auditory pulse so the brain 'hears what it read'
+        """
+        try:
+            query   = result.query
+            snippet = (result.snippet or "")[:1200]   # browser-like: keep full answer
+            with self._search_lock:
+                self._search_events.append((speaker, query, snippet))
+
+            # Semantic ingestion: extract CLEAN word tokens and write each
+            # with light spike weight so the dict accumulates new vocabulary.
+            # sonar-pro answers carry markdown (**bold**, _italic_) and inline
+            # citation markers ([1][2], [src: ...]); naive splitting would
+            # encode '**chlorophyll**' and 'cell.”[2]' as junk words distinct
+            # from the real token. Strip bracketed spans, then keep only
+            # alphabetic word-cores so the lexicon learns 'chlorophyll', not noise.
+            # Both writers differ: nova_write takes the full region/trust schema,
+            # simona_write is just (word, burst, tick).
+            try:
+                import re
+                cleaned = re.sub(r"\[[^\]]*\]", " ", snippet)          # drop [2][3], [src: ...]
+                raw = re.findall(r"[A-Za-z][A-Za-z'\-]+", cleaned)     # word-cores only
+                seen: set[str] = set()
+                tokens: list[str] = []
+                for t in raw:
+                    t = t.lower()
+                    if len(t) >= 3 and t not in seen:
+                        seen.add(t)
+                        tokens.append(t)
+                wrote = False
+                for tok in tokens[:48]:   # richer answer → absorb more vocabulary
+                    try:
+                        if speaker == "nova":
+                            self.sem.nova_write(
+                                word=tok, region_scores={},
+                                spike_count=0.6, tick=self.tick, trust=0.55,
+                            )
+                        else:
+                            self.sem.simona_write(word=tok, burst=0.6, tick=self.tick)
+                        wrote = True
+                    except Exception:
+                        pass
+                # Persist learned vocabulary. simona_write never auto-saves and
+                # nova_write only saves every SAVE_EVERY_N writes, so a search
+                # Simona fires would otherwise be lost on restart. Searches are
+                # rate-limited (10s cooldown/personality), so an explicit save
+                # per result is cheap and guarantees the knowledge survives.
+                if wrote:
+                    try:
+                        self.sem._save()
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+            # Auditory feedback — brain 'hears' the result echo through.
+            try:
+                self._inject_self_feedback(snippet[:240])
+            except Exception:
+                pass
+
+            # Share what was learned with the OTHER personality through their
+            # secure link — emergent inter-personality knowledge exchange.
+            try:
+                self._share_with_peer(speaker, query, snippet)
+            except Exception:
+                pass
+        except Exception as e:
+            _log(f"_on_search_result error: {e}")
+
+    def _share_with_peer(self, speaker: str, query: str, snippet: str) -> None:
+        """
+        Emergent inter-personality info sharing. When one personality learns
+        something from a search she passes the gist to the OTHER through their
+        SECURE LINK (semantic-index encoded, opaque to the observer) AND cross-
+        fills the peer's own retrieval channel so the peer can actually USE what
+        was learned — the shared dict is otherwise lopsided (nova_write fills the
+        cosine/region channel, simona_write the emotional one, so a word one
+        learns is near-invisible to the other). The gist also enters the peer's
+        working memory so it surfaces in their thoughts. No scripted content —
+        the gist is read off what was actually searched and read.
+        """
+        import re
+        stop = {"what", "is", "are", "was", "were", "does", "do", "did", "mean",
+                "means", "the", "a", "an", "of", "how", "to", "pronounce",
+                "explain", "tell", "me", "about", "and", "or", "with", "for",
+                "why", "who", "when", "where", "this", "that"}
+        words = [w for w in re.findall(r"[A-Za-z][A-Za-z'\-]+", (query or "").lower())
+                 if w not in stop and len(w) >= 3]
+        body = [w.lower() for w in re.findall(
+            r"[A-Za-z][A-Za-z'\-]+", re.sub(r"\[[^\]]*\]", " ", snippet or ""))]
+        gist, seen = [], set()
+        for w in words + body:
+            if w not in seen and len(w) >= 3 and w not in stop:
+                seen.add(w)
+                gist.append(w)
+            if len(gist) >= 4:
+                break
+        if not gist:
+            return
+        # A modest memory/language region pattern so a SHARED concept is
+        # actually retrievable by Nova's cosine lookup (an empty pattern is
+        # invisible to her). Biased to temporal/hippocampus (heard knowledge).
+        nova_share_regions = {"thalamus": 0.30, "temporal": 0.55, "hippocampus": 0.55,
+                              "acc": 0.25, "pfc": 0.30, "broca": 0.45, "insula": 0.30}
+        if speaker == "nova":
+            for w in gist:                       # fill Simona's retrieval channel
+                self.sem.simona_write(word=w, burst=0.5, tick=self.tick)
+            self.simona_wm.add(gist[0], regions={}, salience=0.6, t_encoded=self.tick)
+            self.personality_link.send_from_nova(
+                self.personality_link._encode_thought(" ".join(gist), self.sem))
+        else:
+            for w in gist:                       # fill Nova's retrieval channel
+                self.sem.nova_write(word=w, region_scores=nova_share_regions,
+                                    spike_count=0.6, tick=self.tick, trust=0.5)
+            self.nova_wm.add(gist[0], regions={}, salience=0.6, t_encoded=self.tick)
+            self.personality_link.send_from_simona(
+                self.personality_link._encode_thought(" ".join(gist), self.sem))
+
+    def get_pending_searches(self) -> list[tuple[str, str, str]]:
+        """Drained by Rust each tick. Returns list of (speaker, query, snippet)."""
+        with self._search_lock:
+            evs = list(self._search_events)
+            self._search_events.clear()
+            return evs
 
     def _inject_self_feedback(self, thought: str):
         """
@@ -2156,6 +4864,9 @@ class NeuromorphicBrain:
              voice_features: Optional[list] = None) -> dict:
         self.tick += 1
 
+        # Check for hot-patches (non-blocking, checked every 50 ticks ~2.5s)
+        self.patcher.check_and_apply(self.tick, self.nova, self.simona, self.sem)
+
         # Voice identity
         trust = 0.7
         if voice_features and len(voice_features) == 5:
@@ -2174,6 +4885,11 @@ class NeuromorphicBrain:
         self._combined_id = combined
         inhib_current = -0.40 if inhibitory else 0.0
 
+        # Persona recognition — if a known character is on screen, refresh
+        # the Hebbian binding so the name keeps strengthening with exposure.
+        if face_present and face_np is not None:
+            self.persona.refresh_binding(self.sem, face_np, self.tick)
+
         # ── Autonomy substrate ───────────────────────────────────────────
         # Rumination load: how full are the inner thought buffers?
         rumi_load = (self.nova.thought_pipe.buffer_size()
@@ -2185,6 +4901,67 @@ class NeuromorphicBrain:
 
         # Default-mode drive — keeps Phill alive when world is silent
         intrinsic_drive = self.dmn.drive(mic_volume, rumi_load, external_event)
+
+        # ── Amygdala + neuromodulators ───────────────────────────────────
+        # Diffuse chemical tone updated each tick from EMERGENT signals, then
+        # applied as bounded modulators to the dynamics below. Activity readouts
+        # reflect the last ~30 ticks (spike history), so they're valid pre-forward.
+        nova_act_pre = self.nova.activity()
+        sim_act_pre  = self.simona.activity()
+        nova_esteem  = self.nova_voice_self.feel()
+        sim_esteem   = self.simona_voice_self.feel()
+        # Reward = improvements feel good (esteem gains, new babble bindings,
+        # rising recognition of the architect). Drives dopamine.
+        nova_reward = (3.0 * max(0.0, nova_esteem - self._prev_nova_esteem)
+                       + 0.25 * max(0, self.nova_babble.bound_count - self._prev_nova_bound)
+                       + 0.8 * max(0.0, combined - self._prev_combined_id))
+        sim_reward  = (3.0 * max(0.0, sim_esteem - self._prev_simona_esteem)
+                       + 0.25 * max(0, self.simona_babble.bound_count - self._prev_simona_bound)
+                       + 0.8 * max(0.0, combined - self._prev_combined_id))
+        self._prev_nova_esteem   = nova_esteem
+        self._prev_simona_esteem = sim_esteem
+        self._prev_nova_bound    = self.nova_babble.bound_count
+        self._prev_simona_bound  = self.simona_babble.bound_count
+        self._prev_combined_id   = combined
+        # Amygdala appraisal → arousal (per personality, different reactivity).
+        nova_arousal = self.nova_amyg.appraise(
+            mic_volume, combined, face_present,
+            nova_act_pre.get("insula", 0.0), self.nova_voice_fwd.surprise)
+        sim_arousal  = self.simona_amyg.appraise(
+            mic_volume, combined, face_present,
+            sim_act_pre.get("insula_s", 0.0), self.simona_voice_fwd.surprise)
+        # Oxytocin calms the amygdala: when bonded/secure, the threat response is
+        # damped (less startle). Uses last tick's oxytocin. Applied to the stored
+        # arousal so everything downstream sees the secure, damped value.
+        self.nova_amyg.arousal   *= (1.0 - self.nova_neuro.threat_damping())
+        self.simona_amyg.arousal *= (1.0 - self.simona_neuro.threat_damping())
+        nova_arousal = self.nova_amyg.arousal
+        sim_arousal  = self.simona_amyg.arousal
+
+        nova_tot = sum(nova_act_pre.values()) / max(1, len(nova_act_pre))
+        sim_tot  = sum(sim_act_pre.values()) / max(1, len(sim_act_pre))
+        social = max(float(getattr(self, "_text_presence", 0.0)),
+                     float(trust), 0.6 if face_present else 0.0)
+        # Stage-4 drive signals (emergent):
+        #   attention — being engaged/recognised (social + recognised identity)
+        #   novelty   — forward-model surprise (the unexpected)
+        #   urgency   — recent external event (something just happened)
+        #   bonding   — social contact + recognition + peer-link activity
+        attention = max(social, float(combined))
+        urgency   = 1.0 if (self.tick - self._last_external_tick) < 30 else 0.0
+        link_active = (len(self.personality_link._queue_nova_to_simona)
+                       + len(self.personality_link._queue_simona_to_nova)) > 0
+        bonding = min(1.0, 0.6 * float(combined) + 0.4 * social + (0.2 if link_active else 0.0))
+        self.nova_neuro.update(nova_reward, nova_tot, nova_arousal, social,
+                               attention=attention, novelty=self.nova_voice_fwd.surprise,
+                               urgency=urgency, bonding=bonding)
+        self.simona_neuro.update(sim_reward, sim_tot, sim_arousal, social,
+                                 attention=attention, novelty=self.simona_voice_fwd.surprise,
+                                 urgency=urgency, bonding=bonding)
+
+        # Dopamine drives "wanting": scale curiosity-neuron build this tick.
+        self.nova_motiv.build_rate   = self._nova_motiv_build0 * self.nova_neuro.motivation_gain()
+        self.simona_motiv.build_rate = self._simona_motiv_build0 * self.simona_neuro.motivation_gain()
 
         # Curiosity neurons: satiated by V_phill (last tick) and current mic
         satiation = min(1.0, max(mic_volume * 5.0, self._V_phill_live))
@@ -2217,62 +4994,47 @@ class NeuromorphicBrain:
             self._phill_spk_live = phill_spk.detach()
             self._auditory_live  = auditory.detach()
 
-            # Modulate
-            self.nova.modulate_all(V_phill)
-            self.simona.modulate_all(V_phill)
+            # Modulate — Phill threshold rise PLUS bounded neuromodulatory
+            # offset (serotonin/GABA raise thresholds = calm/patience; dopamine
+            # lowers = drive). Per personality, so their chemistry diverges.
+            self.nova.modulate_all(V_phill, self.nova_neuro.threshold_offset())
+            self.simona.modulate_all(V_phill, self.simona_neuro.threshold_offset())
 
-            # Run both brains (Nova receives curiosity-driven region primes)
-            self.nova.forward(auditory, phill_spk, nova_primes, face_t, kin_t, inhib_current)
+            # Amygdala threat → Nova's ACC vigilance (caution before action).
+            # Folds into the existing anti-gullibility inhibitory current.
+            nova_inhib = inhib_current
+            if self.nova_neuro.arousal > 0.45:
+                nova_inhib = min(nova_inhib, -0.32 * self.nova_neuro.arousal)
+
+            # Run both brains (Nova receives curiosity-driven region primes).
+            # Simona's reactivity comes through her hot amygdala → low serotonin
+            # → lower thresholds above, so no separate current injection needed.
+            self.nova.forward(auditory, phill_spk, nova_primes, face_t, kin_t, nova_inhib)
             self.simona.forward(auditory, phill_spk, face_t, kin_t)
 
-        # ── Thought pipe ticks ────────────────────────────────────────────
-        # Generate inner thoughts (not yet spoken — just push to pipe)
+        # ── Activity readouts (forward has already run above) ────────────
         nova_act   = self.nova.activity()
         simona_act = self.simona.activity()
 
-        nova_inner   = _generate_nova_thought(nova_act, V_phill, [], trust, combined, self.nova._vigilance)
-        simona_inner = _generate_simona_thought(simona_act, V_phill, [], combined, face_present)
-        self.nova.thought_pipe.push(nova_inner)
-        self.simona.thought_pipe.push(simona_inner)
-
-        # Autonomy pressure: each pipe has a personal idle timer (ticks
-        # since its own last leak). That lets Nova accumulate uninterrupted
-        # by Simona's chatter and vice versa. Boredom + curiosity scale
-        # the magnitude. Without this the mean-zero phill_proj design
-        # prevents any pressure during pure silence.
-        nova_idle = min(1.0, (self.tick - self.nova.thought_pipe.last_leak_tick) / 800.0)
-        sim_idle  = min(1.0, (self.tick - self.simona.thought_pipe.last_leak_tick) / 180.0)
-        nova_autop = (0.40 * nova_idle * self.dmn.boredom
-                      + 0.30 * self._nova_cur_decay) * 0.085
-        sim_autop  = (0.40 * sim_idle  * self.dmn.boredom
-                      + 0.30 * self._simona_cur_decay) * 0.05
-        self.nova.thought_pipe.add_autonomy_pressure(nova_autop)
-        self.simona.thought_pipe.add_autonomy_pressure(sim_autop)
-
-        # Check if pressure crossed leak threshold
-        nova_leak   = self.nova.thought_pipe.tick(V_phill, self.nova.broca.activity())
-        simona_leak = self.simona.thought_pipe.tick(V_phill, self.simona.broca_s.activity())
-        if nova_leak:
-            self._push_leaked_thought("nova", nova_leak)
-            self._inject_self_feedback(nova_leak)
-            self._last_external_tick = self.tick
-            self.nova.thought_pipe.last_leak_tick = self.tick
-            self.dmn.partial_relief()
-            if not self.nova_tts.is_speaking() and not self.simona_tts.is_speaking():
-                try:    self.nova_tts.speak(nova_leak)
-                except Exception: pass
-        if simona_leak:
-            self._push_leaked_thought("simona", simona_leak)
-            self._inject_self_feedback(simona_leak)
-            self._last_external_tick = self.tick
-            self.simona.thought_pipe.last_leak_tick = self.tick
-            # Simona's spam does not relieve the brain's overall boredom —
-            # only Nova's deliberate leaks do.
-            if not self.nova_tts.is_speaking() and not self.simona_tts.is_speaking():
-                try:    self.simona_tts.speak(simona_leak)
-                except Exception: pass
+        # ── Publish sensory snapshot for personality threads ─────────────
+        # The threads do their own cognition (DMN, WM, SoC, pipe leak,
+        # babble) on their own clocks; they read this snapshot under lock.
+        with self._sensory_lock:
+            self._sensory_snapshot = {
+                "tick":               self.tick,
+                "mic_volume":         float(mic_volume),
+                "V_phill":            float(V_phill),
+                "face_present":       bool(face_present),
+                "trust":              float(trust),
+                "combined":           float(combined),
+                "last_external_tick": int(self._last_external_tick),
+            }
 
         # ── Speech triggers ────────────────────────────────────────────────
+        # When Broca sustains, the brain wants to vocalize. The phrase comes
+        # from the existing emergent path (_nova_response / _simona_response),
+        # which is cosine-similarity over the semantic dictionary — never a
+        # hardcoded "Affective field at X%" diagnostic template.
         speech_trigger: Optional[str] = None
         if self.nova.broca_spikes() > 0:
             self._nova_broca_sustain += 1
@@ -2285,10 +5047,17 @@ class NeuromorphicBrain:
             speech_trigger = "simona"
 
         if speech_trigger and not self.nova_tts.is_speaking() and not self.simona_tts.is_speaking():
-            if speech_trigger == "nova":
-                self.nova_tts.speak(f"Affective field at {int(V_phill*100)}%.")
-            else:
-                self.simona_tts.speak(f"Burst! insula at {simona_act.get('insula_s',0):.2f}!")
+            try:
+                if speech_trigger == "nova":
+                    phrase = _nova_response(self.nova, V_phill, [], trust, combined, self.sem)
+                    if phrase:
+                        self.nova_tts.speak(phrase)
+                else:
+                    phrase = _simona_response(self.simona, V_phill, [], trust, combined, self.sem)
+                    if phrase:
+                        self.simona_tts.speak(phrase)
+            except Exception as e:
+                _log(f"Speech trigger error: {e}")
 
         # ── Decay autonomy envelopes ─────────────────────────────────────
         # Curiosity primes and self-feedback both fade across a few ticks.
@@ -2296,6 +5065,29 @@ class NeuromorphicBrain:
         self._nova_cur_decay   *= 0.85
         self._simona_cur_decay *= 0.85
         self._self_fb_decay    *= 0.78
+
+        # ── Sleep / consolidation (Stage 3) ───────────────────────────────
+        # Sleep pressure builds while awake; they nap when sleepy AND calm AND
+        # unstimulated, and wake the instant something happens. Asleep, the
+        # hippocampus replays the day and consolidates it into the lexicon.
+        stimulation = min(1.0, mic_volume * 4.0
+                          + (0.4 if face_present else 0.0)
+                          + (0.5 if (self.tick - self._last_external_tick) < 40 else 0.0))
+        arousal_now = max(self.nova_amyg.arousal, self.simona_amyg.arousal)
+        # Norepinephrine opposes sleep: elevated NE = alert/vigilant, keeps them
+        # awake. Folded into the 'arousal' the sleep gate sees, so high NE blocks
+        # sleep entry and ACh stays high (attentive) rather than dropping.
+        ne_alert = max(0.0, (self.nova_neuro.ne + self.simona_neuro.ne) / 2.0 - self.nova_neuro.ne0)
+        was_asleep = self.asleep
+        self.asleep = self.sleep.update(stimulation, max(arousal_now, ne_alert))
+        if self.asleep and not was_asleep:
+            _log(f"[sleep] Nova & Simona fell asleep (pressure {self.sleep.pressure:.2f}) — "
+                 f"replaying {len(self.nova_episodic)}+{len(self.simona_episodic)} episodes")
+        elif was_asleep and not self.asleep:
+            _log(f"[wake] woke (pressure {self.sleep.pressure:.2f}) — "
+                 f"consolidated {self.nova_episodic.consolidated}+{self.simona_episodic.consolidated}")
+        if self.asleep:
+            self._sleep_consolidate()
 
         return {
             "tick":              self.tick,
@@ -2320,15 +5112,62 @@ class NeuromorphicBrain:
             "face_present":      face_present,
             "imprint_status":    self.imprint.status(),
             "camera_active":     self._camera.available if self._camera else False,
-            "nova_vigilance":    self.nova._vigilance,
-            "nova_pressure":     round(self.nova.thought_pipe._pressure.voltage, 3),
-            "simona_pressure":   round(self.simona.thought_pipe._pressure.voltage, 3),
-            "intrinsic_drive":   round(intrinsic_drive, 5),
-            "boredom":           round(self.dmn.boredom, 3),
-            "nova_motiv":        round(self.nova_motiv.voltage, 3),
-            "simona_motiv":      round(self.simona_motiv.voltage, 3),
-            "self_fb_decay":     round(self._self_fb_decay, 3),
-            "ticks_since_event": self.tick - self._last_external_tick,
+            "nova_vigilance":       self.nova._vigilance,
+            "nova_pressure":        round(self.nova.thought_pipe._pressure.voltage, 3),
+            "simona_pressure":      round(self.simona.thought_pipe._pressure.voltage, 3),
+            "intrinsic_drive":      round(intrinsic_drive, 5),
+            "boredom":              round(self.dmn.boredom, 3),
+            "nova_motiv":           round(self.nova_motiv.voltage, 3),
+            "simona_motiv":         round(self.simona_motiv.voltage, 3),
+            "self_fb_decay":        round(self._self_fb_decay, 3),
+            "ticks_since_event":    self.tick - self._last_external_tick,
+            # Babbling cortex stats
+            "nova_babble_count":    self.nova_babble.babble_count,
+            "nova_bound_count":     self.nova_babble.bound_count,
+            "nova_motor_map_size":  len(self.nova_babble.motor_to_phoneme),
+            "simona_babble_count":  self.simona_babble.babble_count,
+            "simona_bound_count":   self.simona_babble.bound_count,
+            "simona_motor_map_size":len(self.simona_babble.motor_to_phoneme),
+            # Vocal self-esteem — 'do I like how my voice sounds?' (0..1)
+            "nova_voice_esteem":    round(self.nova_voice_self.feel(), 3),
+            "simona_voice_esteem":  round(self.simona_voice_self.feel(), 3),
+            # Predictive self-monitoring — 'surprise' = how far the produced
+            # sound was from what the forward model predicted (0..1).
+            "nova_voice_surprise":  round(self.nova_voice_fwd.surprise, 3),
+            "simona_voice_surprise":round(self.simona_voice_fwd.surprise, 3),
+            # Secret inter-personality link — shows pending message counts
+            # (content is opaque; the numbers show they're communicating, not what they're saying)
+            "link_nova_to_simona":  len(self.personality_link._queue_nova_to_simona),
+            "link_simona_to_nova":  len(self.personality_link._queue_simona_to_nova),
+            # Neurochemistry — dopamine / serotonin / GABA / amygdala arousal
+            "nova_da":        self.nova_neuro.snapshot()["da"],
+            "nova_ser":       self.nova_neuro.snapshot()["ser"],
+            "nova_gaba":      self.nova_neuro.snapshot()["gaba"],
+            "nova_arousal":   round(self.nova_amyg.arousal, 3),
+            "simona_da":      self.simona_neuro.snapshot()["da"],
+            "simona_ser":     self.simona_neuro.snapshot()["ser"],
+            "simona_gaba":    self.simona_neuro.snapshot()["gaba"],
+            "simona_arousal": round(self.simona_amyg.arousal, 3),
+            # Stage-4 neuromodulators: acetylcholine / norepinephrine / oxytocin
+            "nova_ach":   self.nova_neuro.snapshot()["ach"],
+            "nova_ne":    self.nova_neuro.snapshot()["ne"],
+            "nova_oxy":   self.nova_neuro.snapshot()["oxy"],
+            "simona_ach": self.simona_neuro.snapshot()["ach"],
+            "simona_ne":  self.simona_neuro.snapshot()["ne"],
+            "simona_oxy": self.simona_neuro.snapshot()["oxy"],
+            # Basal ganglia — currently selected action (or 'rest')
+            "nova_action":    self.nova_bg.last_action or "rest",
+            "simona_action":  self.simona_bg.last_action or "rest",
+            # Cerebellum — motor coordination/fluency (0..1, climbs as it learns)
+            "nova_coord":     round(self.nova_cerebellum.coordination(), 3),
+            "simona_coord":   round(self.simona_cerebellum.coordination(), 3),
+            # Sleep / consolidation (Stage 3)
+            "asleep":          bool(self.asleep),
+            "sleep_pressure":  round(self.sleep.pressure, 3),
+            "nova_episodes":   len(self.nova_episodic),
+            "simona_episodes": len(self.simona_episodic),
+            "nova_consolidated":   self.nova_episodic.consolidated,
+            "simona_consolidated": self.simona_episodic.consolidated,
         }
 
     # ── THINK ─────────────────────────────────────────────────────────────────
@@ -2336,6 +5175,39 @@ class NeuromorphicBrain:
     def think(self, text: str) -> dict:
         if not text.strip():
             return {"nova": "...", "simona": None, "active_regions": [], "energy": 0.0}
+
+        # The architect spoke — wake them if they were asleep.
+        try:
+            self.sleep.wake()
+            self.asleep = False
+        except Exception:
+            pass
+
+        # ── Unknown-word detection feeds SearchCortex (both personalities) ─
+        # Any token in user input with weak/no binding becomes search pressure.
+        try:
+            entries = getattr(self.sem, "entries", {}) or {}
+            for raw in text.split():
+                tok = raw.strip(".,!?;:\"'()[]").lower()
+                if len(tok) < 3:
+                    continue
+                ent = entries.get(tok)
+                spike_mean = 0.0
+                count = 0
+                if isinstance(ent, dict):
+                    spike_mean = float(ent.get("spike_mean", 0.0))
+                    count = int(ent.get("count", 0))
+                # "Unknown" = never seen OR very weak binding
+                if ent is None or (spike_mean < 0.3 and count < 2):
+                    self.nova_search.note_unknown_word(tok)
+                    self.simona_search.note_unknown_word(tok)
+                # Pronunciation target: known concept but articulator mapping
+                # is weak (low bound_count) — the brain wants to learn the sound.
+                elif self.nova_babble.bound_count < 40:
+                    self.nova_search.note_pronunciation_target(tok)
+                    self.simona_search.note_pronunciation_target(tok)
+        except Exception:
+            pass
 
         # ── Special commands ──────────────────────────────────────────────
         text_l = text.lower()
@@ -2425,7 +5297,16 @@ class NeuromorphicBrain:
                         "story_event": None,
                     }
 
-        trust    = self.voice.trust
+        # Typed input IS architect presence, even with no voice. When the
+        # owner types (e.g. can't speak — someone asleep nearby), ramp a
+        # text-presence trust so their words clear the prime/learn gate
+        # (prime_regions needs trust > 0.3) and the brains recognise sustained
+        # engagement instead of staying in pre-verbal self-talk. Earned over a
+        # few messages (mirrors how voice trust ramps), capped below a fully
+        # recognised voiceprint. Kept separate from self.voice.trust so the
+        # VOICE gauge stays an honest voice-only signal.
+        self._text_presence = min(0.75, getattr(self, "_text_presence", 0.0) + 0.18)
+        trust    = max(self.voice.trust, self._text_presence)
         primes, fired = get_concept_primes(text)
         sem_boost = self.sem.prime_regions(text, trust)
         for r, b in sem_boost.items():
@@ -2438,15 +5319,18 @@ class NeuromorphicBrain:
         for c in fired:
             self._concept_ctx.append(c)
 
-        # Strong language-routing boost so Nova actually crosses her PFC
-        # threshold within the think_ticks budget. Without this she falls
-        # to the diagnostic-readout branch every time and looks broken.
-        # Applied even when fired is empty — a heard prompt deserves a try.
-        primes["pfc"]      = min(1.2, primes.get("pfc",     0.0) + 0.55)
-        primes["broca"]    = min(1.2, primes.get("broca",   0.0) + 0.45)
-        primes["hippocampus"] = min(1.2, primes.get("hippocampus", 0.0) + 0.30)
-        primes["broca_s"]  = min(1.2, primes.get("broca_s", 0.0) + 0.40)
-        primes["temporal"] = min(1.2, primes.get("temporal", 0.0) + 0.20)
+        # Emergent priming from each personality's working memory (Cowan
+        # ~4-slot, salience-weighted region biases). This replaces the
+        # previous hardcoded +0.55 PFC / +0.45 Broca / +0.30 hippocampus
+        # "trainer hack" — a constant boost applied every think() call to
+        # force language routing. Working memory provides equivalent
+        # priming when there's recent context to draw on, and zero priming
+        # when the brain genuinely has nothing in mind — which is the
+        # honest behavior the previous hack hid.
+        for r, v in self.nova_wm.prime_dict(scale=0.35).items():
+            primes[r] = min(1.2, primes.get(r, 0.0) + float(v))
+        for r, v in self.simona_wm.prime_dict(scale=0.30).items():
+            primes[r] = min(1.2, primes.get(r, 0.0) + float(v))
 
         energy      = sum(primes.values()) / max(1, len(primes))
         think_ticks = max(14, min(36, int(len(primes)*3 + energy*8) + 6))
